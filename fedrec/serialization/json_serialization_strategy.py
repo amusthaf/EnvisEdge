@@ -3,13 +3,12 @@ import io
 import json
 import pickle
 from abc import ABC, abstractmethod
-from json import dumps, loads
-
 from fedrec.utilities import registry
-from fedrec.data_models.messages import JobResponseMessage, JobSubmitMessage
+from json import dumps, loads
 from fedrec.serialization.abstract_serializer import SerializationStrategy
 
 
+@registry.load("serialization", "json")
 class JSONSerialization(SerializationStrategy):
     """Uses json serialization strategy for objects.
 

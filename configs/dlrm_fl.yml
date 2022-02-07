@@ -29,7 +29,7 @@ model :
 
   
   preproc :
-    datafile : "/home/ramesht/nimbleedge/data/train.txt"
+    datafile : "/home/ubuntu/data/train.txt"
     output_file : "kaggleAdDisplayChallenge_processed"
     dataset_config :
       name : "kaggle"
@@ -42,9 +42,9 @@ multiprocessing:
   process_manager : 
     name : "ray"
     
-  communications : 
+  communications_interfaces : 
     name : "kafka"
-    serializer : "json"
+    serialization : "json"
     consumer : True
     producer : True
     consumer_port : 9092

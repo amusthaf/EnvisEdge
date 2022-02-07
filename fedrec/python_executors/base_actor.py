@@ -9,27 +9,6 @@ from fedrec.utilities.logger import BaseLogger
 from fedrec.utilities.random_state import RandomizationConfig, Reproducible
 
 
-@attr.s(kw_only=True)
-class ActorState:
-    """Construct a ActorState object to reinstatiate an actor when needed.
-
-    Attributes
-    ----------
-    id : int
-        Unique worker identifier
-    round_idx : int
-        The number of local training cycles finished
-    state_dict : dict
-        A dictionary of state dicts storing model weights and optimizer dicts
-    storage : str
-        The address for persistent storage
-    """
-    id = attr.ib()
-    round_idx = attr.ib(0)
-    state_dict = attr.ib(None)
-    storage = attr.ib(None)
-
-
 class BaseActor(Reproducible, ABC):
     """Base Actor implements the core federated learning logic.
     It encapsulates the ML trainer to enable distributed training
@@ -63,7 +42,6 @@ class BaseActor(Reproducible, ABC):
         self.persistent_storage = persistent_storage
         self.config = config
         self.logger = logger
-    
 
         modelCls = registry.lookup('model', config["model"])
         self.model_preproc: PreProcessor = registry.instantiate(

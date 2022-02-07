@@ -1,5 +1,6 @@
 from . import datasets
-from . import communications
+from . import communications_interfaces
+from . import data_models
 from . import modules
 from . import multiprocessing
 from . import optimization

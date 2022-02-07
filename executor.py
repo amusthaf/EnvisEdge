@@ -32,7 +32,7 @@ class JobExecutor():
         self.worker = actorCls(
             0, config, logger, **kwargs)
         self.jobber = Jobber(
-            self.worker, logger, config["multiprocessing"]["communications"])
+            self.worker, logger, config["multiprocessing"]["communications_interfaces"])
 
     def run(self):
         return self.jobber.run()

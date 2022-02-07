@@ -1,7 +1,7 @@
 import atexit
 from typing import Dict
 
-from fedrec.communications.messages import JobResponseMessage, JobSubmitMessage
+from fedrec.data_models import job_response_model, job_submit_model
 from fedrec.python_executors.base_actor import BaseActor
 from fedrec.utilities import registry
 from fedrec.utilities.serialization import deserialize_object, serialize_object
@@ -59,8 +59,8 @@ class Jobber:
             print(f"Exception {e}")
             self.stop()
 
-    def execute(self, message: JobSubmitMessage):
-        result_message = JobResponseMessage(
+    def execute(self, message: job_submit_model):
+        result_message = job_response_model(
             job_type=message.job_type,
             senderid=message.receiverid,
             receiverid=message.senderid)
@@ -76,7 +76,7 @@ class Jobber:
             result_message.errors = e
         return result_message
 
-    def publish(self, job_result: JobResponseMessage) -> None:
+    def publish(self, job_result: job_response_model) -> None:
         """
         Publishes the result after executing the job request
         """

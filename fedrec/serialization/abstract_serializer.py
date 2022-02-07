@@ -1,19 +1,9 @@
-"""
-Defines custom serializers and deserializers for different objects
-"""
 
-import os
-import io
-import json
-import pickle
-from abc import ABC, abstractmethod, abstractproperty
-from json import dumps, loads
+from abc import ABC, abstractmethod
 from xml.dom import NotSupportedErr
 
-from fedrec.utilities import registry
-from fedrec.utilities.serialization import load_tensor, save_tensor
-from fedrec.data_models.messages import JobResponseMessage, JobSubmitMessage
 from collections import defaultdict
+
 
 class Serializable(object):
 
@@ -25,14 +15,16 @@ class Serializable(object):
 SERIALIZER_MAP = defaultdict(dict)
 ACTIVE_SERIALIZERS = defaultdict(dict)
 
+
 def serializable_with(serializer_name):
-    
+
     def decorator(serialized_class):
         assert issubclass(serialized_class, Serializable), NotSupportedErr()
 
         SERIALIZER_MAP[serialized_class.type_name()] = serializer_name
         return serialized_class
     return decorator
+
 
 def get_serializer(serialized_obj, srl_strategy):
     cls = None
@@ -45,9 +37,10 @@ def get_serializer(serialized_obj, srl_strategy):
 
     if cls not in ACTIVE_SERIALIZERS:
         ACTIVE_SERIALIZERS[cls] = cls(srl_strategy)
-    
+
     ACTIVE_SERIALIZERS[cls].serialization_strategy = srl_strategy
     return ACTIVE_SERIALIZERS[cls]
+
 
 class SerializationStrategy(ABC):
 
