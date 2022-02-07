@@ -1,5 +1,5 @@
-import collections
 import sys
+import collections
 from abc import abstractproperty
 from typing import Callable, Dict
 
