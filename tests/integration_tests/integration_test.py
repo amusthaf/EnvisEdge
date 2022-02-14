@@ -1,4 +1,5 @@
 import sys
+sys.path.append("/home/ramesht/nimbleedge/origin/RecoEdge")
 import collections
 from abc import abstractproperty
 from typing import Callable, Dict
@@ -7,7 +8,8 @@ import experiments
 import fedrec
 import fl_strategies
 import yaml
-from fedrec.communications.messages import JobResponseMessage, JobSubmitMessage
+from fedrec.data_models.job_submit_model import JobSubmitMessage
+from fedrec.data_models.job_response_model import JobResponseMessage
 from fedrec.python_executors.aggregator import Aggregator, Neighbour
 from fedrec.python_executors.base_actor import BaseActor
 from fedrec.python_executors.trainer import Trainer
@@ -21,8 +23,8 @@ class AbstractTester():
         self.config = config
 
         self.comm_manager = registry.construct(
-            "communications",
-            config=config["multiprocessing"]["communications"])
+            "communication_interface",
+            config=config["multiprocessing"]["communication_interface"])
         self.logger = NoOpLogger()
 
     def send_message(self, message):
@@ -71,8 +73,8 @@ class TestTrainer(AbstractTester):
             senderid=self.worker.worker_index,
             receiverid=self.worker.worker_index,
             job_type="train",
-            job_args=None,
-            job_kwargs=None
+            job_args=[],
+            job_kwargs={}
         )
         # check response message
         if response.status:
@@ -85,8 +87,8 @@ class TestTrainer(AbstractTester):
             senderid=self.worker.worker_index,
             receiverid=self.worker.worker_index,
             job_type="test",
-            job_args=None,
-            job_kwargs=None
+            job_args=[],
+            job_kwargs={}
         )
         if response.status:
             worker_state = response.results
@@ -144,7 +146,7 @@ class TestAggregator(AbstractTester):
 
 if __name__ == "__main__":
 
-    with open("../configs/dlrm_fl.yml", 'r') as cfg:
+    with open("./configs/dlrm_fl.yml", 'r') as cfg:
         config = yaml.load(cfg, Loader=yaml.FullLoader)
 
     print(config['model'])
