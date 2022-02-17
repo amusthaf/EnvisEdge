@@ -1,4 +1,3 @@
-
 from abc import ABC, abstractmethod
 from fedrec.utilities.serialization_utils import get_serializer
 

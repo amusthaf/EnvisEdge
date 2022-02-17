@@ -25,6 +25,7 @@ class AbstractTester():
         self.comm_manager = registry.construct(
             "communication_interface",
             config=config["multiprocessing"]["communication_interface"])
+
         self.logger = NoOpLogger()
 
     def send_message(self, message):
@@ -145,6 +146,7 @@ class TestAggregator(AbstractTester):
 
 
 if __name__ == "__main__":
+
 
     with open("./configs/dlrm_fl.yml", 'r') as cfg:
         config = yaml.load(cfg, Loader=yaml.FullLoader)
