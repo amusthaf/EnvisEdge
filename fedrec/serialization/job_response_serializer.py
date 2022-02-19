@@ -25,5 +25,5 @@ class JobResponseSerializer(AbstractSerializer):
         obj = self.serialization_strategy.parse(obj)
 
         return JobResponseMessage(obj["job_type"],
-                                  senderid,
-                                  receiverid)
+                                  obj["senderid"],
+                                  obj["receiverid"])

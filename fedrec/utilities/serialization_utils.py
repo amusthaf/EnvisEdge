@@ -29,14 +29,15 @@ def serializer_of(serialized_class):
 
 def get_serializer(serialized_obj, srl_strategy):
     cls = None
-    print(ACTIVE_SERIALIZERS)
+    print(f"serializer : {ACTIVE_SERIALIZERS}")
+    print(f"map : {SERIALIZER_MAP}")
     if isinstance(serialized_obj, Serializable):
         cls = serialized_obj.type_name()
     elif isinstance(serialized_obj, str):
         cls = serialized_obj
     else:
         raise NotSupportedError(serialized_obj)
-
+    print(f"cls : {cls}")
     if cls in SERIALIZER_MAP:
         if cls not in ACTIVE_SERIALIZERS:
             ACTIVE_SERIALIZERS[cls] = SERIALIZER_MAP[cls](srl_strategy)
