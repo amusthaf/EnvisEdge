@@ -1,5 +1,5 @@
 import sys
-sys.path.append("/home/ramesht/nimbleedge/origin/RecoEdge")
+sys.path.append("/home/ramesht/origin/RecoEdge")
 import collections
 from abc import abstractproperty
 from typing import Callable, Dict

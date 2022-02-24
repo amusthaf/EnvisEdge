@@ -1,4 +1,5 @@
 from abc import ABC, abstractclassmethod, abstractmethod
+from distutils.log import error
 from typing import Dict
 
 import attr
@@ -7,6 +8,7 @@ from fedrec.preprocessor import PreProcessor
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
 from fedrec.utilities.random_state import RandomizationConfig, Reproducible
+from data_models.state_dict_model import StateTensorDict
 
 
 class BaseActor(Reproducible, ABC):
@@ -93,7 +95,23 @@ class BaseActor(Reproducible, ABC):
         Dict:
             A dict containing the model weights.
         """
-        return self.model.cpu().state_dict()
+        return StateTensorDict(
+            storgae = self.persistent_storage,
+            worker_id=self.worker_index,
+            state_dict=self.model.cpu().state_dict(),
+            round_idx=self.round_idx,
+            state_type=self.name)
+
+    def _get_optimizer_params(self):
+        if self._optimizer is not None:
+            return StateTensorDict(
+                storgae = self.persistent_storage,
+                worker_id=self.worker_index,
+                state_dict=self.optimizer.state_dict(),
+                round_idx=self.round_idx,
+                state_type=self.name)
+        else:
+            raise ValueError("No optimizer found")
 
     def update_model(self, weights):
         """Update the model weights with weights.

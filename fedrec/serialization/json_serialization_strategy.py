@@ -1,11 +1,7 @@
-import os
-import io
-import json
-import pickle
-from abc import ABC, abstractmethod
-from fedrec.utilities import registry
 from json import dumps, loads
+
 from fedrec.serialization.abstract_serializer import SerializationStrategy
+from fedrec.utilities import registry
 
 
 @registry.load("serialization", "json")
@@ -43,5 +39,5 @@ class JSONSerialization(SerializationStrategy):
         --------
         object
         """
-        
+
         return loads(obj)

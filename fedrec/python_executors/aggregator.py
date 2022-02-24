@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 from typing import Dict
 
 import attr
+from fedrec.data_models.aggregator_state_model import AggregatorState
 from fedrec.python_executors.base_actor import BaseActor
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
-from fedrec.data_models.aggregator_state_model import AggregatorState
 
 
 @attr.s
@@ -88,13 +88,17 @@ class Aggregator(BaseActor, ABC):
             The serialised class object to be written
             to Json or persisted into the file.
         """
+        state = {
+            'model': self._get_model_params(),
+            'step': self.round_idx
+        }
+        if self.optimizer is not None:
+            state['optimizer'] = self._get_optimizer_params()
+
         return AggregatorState(
             id=self.worker_index,
             round_idx=self.round_idx,
-            state_dict={
-                'model': self._get_model_params(),
-                'step': self.round_idx
-            },
+            state_dict=state,
             storage=self.persistent_storage,
             in_neighbours=self.in_neighbours,
             out_neighbours=self.out_neighbours
@@ -115,9 +119,9 @@ class Aggregator(BaseActor, ABC):
         self.in_neighbours = state.in_neighbours
         self.out_neighbours = state.out_neighbours
         self.round_idx = state.round_idx
-        self.model.load_state_dict(state.state_dict['model'])
+        self.model.load_state_dict(state.state_dict['model'].state)
         if self.optimizer is not None:
-            self.optimizer.load_state_dict(state.state_dict['optimizer'])
+            self.optimizer.load_state_dict(state.state_dict['optimizer'].state)
 
     def run(self, func_name, *args, **kwargs):
         """

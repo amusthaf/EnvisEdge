@@ -1,13 +1,11 @@
-import io
-
 import torch
 from fedrec.utilities import registry
 from fedrec.serialization.abstract_serializer import AbstractSerializer
 from fedrec.utilities.io_uitls import load_tensor, save_tensor
-from fedrec.data_models import job_response_model, job_submit_model
+from fedrec.utilities.serialization_utils import serializer_of
 
 
-@registry.load("serializer", torch.Tensor.__name__)
+@serializer_of(torch.Tensor)
 class TensorSerializer(AbstractSerializer):
     """
     TensorSerializer serializes and deserializes torch tensors.
@@ -19,7 +17,7 @@ class TensorSerializer(AbstractSerializer):
     """
 
     @classmethod
-    def serialize(cls, obj, file=None):
+    def serialize(cls, tensor, path=None):
         """
         Serializes a tensor object.
 
@@ -36,20 +34,19 @@ class TensorSerializer(AbstractSerializer):
             The serialized object.
 
         """
-        if file:
+        if path:
             # if file is provided, save the tensor
             # to the file and return the file path.
-            save_tensor(obj, file)
-            return file
+            save_tensor(tensor, path)
+            return path
         else:
             # create a buffer Bytes object,
             # which can be used to write to the file.
-            buffer = io.BytesIO()
-            save_tensor(obj, buffer)
-            return buffer
+            save_tensor(tensor)
+            return path
 
     @classmethod
-    def deserialize(cls, obj):
+    def deserialize(cls, path):
         """
         Deserializes a tensor object.
 
@@ -63,21 +60,6 @@ class TensorSerializer(AbstractSerializer):
         deserialized_obj: object
             The deserialized object.
         """
-        data_file = None
-        if is_s3_file(obj):
-            # This is most likely to be a link of s3 storage.
-            # Copy the file locally and then deserialize it.
-            data_file = download_s3_file(obj)
-        if isinstance(obj, io.BytesIO):
-            data_file = obj
-
-        try:
-            # This should be the path to the tensor object.
-            tensor = load_tensor(obj, device=None)
-        except Exception as e:
-            raise ValueError(
-                "the filename specified to load the tensor from"
-                + "could not be accessed,Please make sure the"
-                + "path has correct permissions")
-        else:
-            return tensor
+  
+        tensor = load_tensor(path)
+        return tensor

@@ -29,7 +29,7 @@ model :
 
   
   preproc :
-    datafile : "/home/ubuntu/data/train.txt"
+    datafile : "/home/ubuntu/dataset/train.txt"
     output_file : "kaggleAdDisplayChallenge_processed"
     dataset_config :
       name : "kaggle"

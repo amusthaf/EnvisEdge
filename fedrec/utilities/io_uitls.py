@@ -1,21 +1,19 @@
-import io
-import os
-import torch
-import numpy as np
-import pathlib
-import attr
-from collections.abc import Iterable
 import argparse
-import pickle
-from warnings import warn
-from fedrec.utilities import registry
+from ctypes import Union
+import os
+from collections.abc import Iterable
+import yaml
+import numpy as np
+import torch
+from data_models.state_dict_model import StateTensorDict
+from data_models.fl_tensor_model import StateTensor
 
-
-def load_tensor(file, device=None):
-    t = torch.load(file)
-    if device is not None:
-        t = t.to(device)
-    return t
+def load_tensors(path):
+    if os.path.isfile(path) == True:
+        tensors = torch.load(path)
+        return tensors
+    else:
+        raise ValueError("Path does not exist.")
 
 
 def to_dict_with_sorted_values(d, key=None):
@@ -35,9 +33,18 @@ def to_dict_with_set_values(d):
     return result
 
 
-def save_tensor(tensor, file):
-    pathlib.Path(file).parent.mkdir(parents=True, exist_ok=True)
-    torch.save(tensor, file)
+def save_tensors(tensors: Union(StateTensorDict,StateTensor), path=None) -> str:
+    if path:
+        if os.path.isfile(path) == True:
+            torch.save(tensors, path)
+            return path
+        else:
+            raise ValueError("Path does not exist.")
+    else:
+        completeName = os.path.join(tensors.get_state_path())
+        file1 = open(completeName, "wb")
+        torch.save(tensors, file1) # state.tensor
+        return completeName
 
 
 def tuplify(dictionary):

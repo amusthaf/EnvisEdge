@@ -16,7 +16,7 @@ class TrainerStateSerializer(AbstractSerializer):
         response_dict = {}
         response_dict["id"] = obj.id
         response_dict["round_idx"] = obj.round_idx
-        response_dict["state_dict"] = self.serialize_attribute( #TODO: state dict serializer
+        response_dict["state_dict"] = self.serialize_attribute( 
             obj.state_dict)
         response_dict["storage"] = obj.storage
         response_dict["model_preproc"] = self.serialize_attribute( #TODO: model preproc serializer
