@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from fedrec.utilities.serialization_utils import get_serializer
+from typing import Dict, List, Tuple
 
 
 class SerializationStrategy(ABC):
@@ -36,13 +37,23 @@ class AbstractSerializer(ABC):
     def get_class_serializer(self, obj):
         return get_serializer(obj, self.serialization_strategy)
 
-    def serialize_attribute(self, obj):
-        serializer = self.get_class_serializer(obj)
-        return serializer.serialize(obj)
+    def serialize_attribute(self, obj):   
+        if isinstance(obj, Dict):
+            return { k: self.serialize_attribute(v) for k,v in obj.items()}
+        elif isinstance(obj, (List,Tuple)):
+            return [self.serialise_attribute(v) for v in obj]
+        else:
+            serializer = self.get_class_serializer(obj)
+            return serializer.serialize(obj)
 
     def deserialize_atttribute(self, obj):
-        deserializer = self.get_class_serializer(obj)
-        return deserializer.deserialize(obj)
+        if isinstance(obj, Dict):
+            return {k: self.deserialize_attribute(v) for k,v in obj.items()}
+        elif isinstance(obj, (List,Tuple)):
+            return [self.deserialize_attribute(v) for v in obj]
+        else:
+            deserializer = self.get_class_serializer(obj)
+            return deserializer.deserialize(obj)
 
     @classmethod
     def generate_message_dict(cls, obj):

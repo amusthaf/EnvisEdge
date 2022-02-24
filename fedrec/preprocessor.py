@@ -24,6 +24,8 @@ class PreProcessor(ABC):
     def datasets(self, *splits):
         pass
 
+    #TODO :  implement alsways ask client_id and datafile
+
 
 @registry.load('preproc', 'dlrm')
 class DLRMPreprocessor(PreProcessor):

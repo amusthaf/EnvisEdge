@@ -16,10 +16,10 @@ class TrainerStateSerializer(AbstractSerializer):
         response_dict = {}
         response_dict["id"] = obj.id
         response_dict["round_idx"] = obj.round_idx
-        response_dict["state_dict"] = self.serialize_attribute(
+        response_dict["state_dict"] = self.serialize_attribute( #TODO: state dict serializer
             obj.state_dict)
         response_dict["storage"] = obj.storage
-        response_dict["model_preproc"] = self.serialize_attribute(
+        response_dict["model_preproc"] = self.serialize_attribute( #TODO: model preproc serializer
             obj.model_preproc)
         response_dict["local_sample_number"] = obj.local_sample_number
         response_dict["local_training_steps"] = obj.local_training_steps
