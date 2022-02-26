@@ -20,7 +20,6 @@ class JobExecutor():
                  **kwargs) -> None:
         """ Class responsible for running aggregator/trainer on a single node.
         """
-
         # Construct trainer and do training
         self.config = config
         if not set(['experiments',
@@ -64,13 +63,13 @@ def main():
         JobExecutor, Aggregator.__name__,
         config_dict["multiprocessing"]["num_aggregators"],
         actorCls=Aggregator,
-        config=config_dict, logger=logger
+        config=config_dict, logger=logger,
     )
     process_manager.distribute(
         JobExecutor, Trainer.__name__,
         config_dict["multiprocessing"]["num_trainers"],
         actorCls=Trainer,
-        config=config_dict, logger=logger
+        config=config_dict, logger=logger,
     )
 
     process_manager.start(Aggregator.__name__, "run")

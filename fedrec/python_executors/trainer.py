@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Dict
 
-import attr
+
 from fedrec.python_executors.base_actor import BaseActor
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
@@ -17,7 +17,6 @@ class Trainer(BaseActor, ABC):
                  worker_index: int,
                  config: Dict,
                  logger: BaseLogger,
-                 persistent_storage: str = None,
                  is_mobile: bool = True,
                  round_idx: int = 0):
         """
@@ -38,7 +37,7 @@ class Trainer(BaseActor, ABC):
 
         """
         super().__init__(worker_index, config, logger,
-                         persistent_storage, is_mobile, round_idx)
+                         is_mobile, round_idx)
         self.local_sample_number = None
         self.local_training_steps = 10
         self._data_loaders = {}

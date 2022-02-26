@@ -5,8 +5,8 @@ from collections.abc import Iterable
 import yaml
 import numpy as np
 import torch
-from data_models.state_dict_model import StateTensorDict
-from data_models.fl_tensor_model import StateTensor
+from fedrec.data_models.state_dict_model import StateTensorDict
+from fedrec.data_models.fl_tensor_model import StateTensor
 
 def load_tensors(path):
     if os.path.isfile(path) == True:
@@ -32,8 +32,8 @@ def to_dict_with_set_values(d):
         result[k] = set(hashable_v)
     return result
 
-
-def save_tensors(tensors: Union(StateTensorDict,StateTensor), path=None) -> str:
+#: Union(StateTensorDict,StateTensor)
+def save_tensors(tensors, path=None) -> str:
     if path:
         if os.path.isfile(path) == True:
             torch.save(tensors, path)
@@ -43,7 +43,7 @@ def save_tensors(tensors: Union(StateTensorDict,StateTensor), path=None) -> str:
     else:
         completeName = os.path.join(tensors.get_state_path())
         file1 = open(completeName, "wb")
-        torch.save(tensors, file1) # state.tensor
+        torch.save(tensors.get_state_dict(), file1) # state.tensor
         return completeName
 
 

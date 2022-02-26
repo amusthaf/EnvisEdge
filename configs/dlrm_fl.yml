@@ -82,3 +82,6 @@ random:
   data_seed : 100
   init_seed : 100
   model_seed : 100
+
+log_dir:
+  PATH: "/home/ramesht/dump_tensor/"

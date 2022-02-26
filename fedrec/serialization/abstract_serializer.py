@@ -2,6 +2,13 @@ from abc import ABC, abstractmethod
 from fedrec.utilities.serialization_utils import get_serializer
 from typing import Dict, List, Tuple
 
+PRIMITIVES_TYPES = (str, int, float, bool)
+
+def is_primitives(obj):
+        if obj is None:
+            return True
+        else:
+            return isinstance(obj, PRIMITIVES_TYPES)
 
 class SerializationStrategy(ABC):
 
@@ -39,9 +46,11 @@ class AbstractSerializer(ABC):
 
     def serialize_attribute(self, obj):   
         if isinstance(obj, Dict):
-            return { k: self.serialize_attribute(v) for k,v in obj.items()}
+            return {k: self.serialize_attribute(v) for k,v in obj.items()}
         elif isinstance(obj, (List,Tuple)):
             return [self.serialise_attribute(v) for v in obj]
+        elif is_primitives(obj):
+            return obj
         else:
             serializer = self.get_class_serializer(obj)
             return serializer.serialize(obj)

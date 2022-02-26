@@ -1,11 +1,12 @@
 import torch
 from fedrec.utilities import registry
 from fedrec.serialization.abstract_serializer import AbstractSerializer
-from fedrec.utilities.io_uitls import load_tensor, save_tensor
+from fedrec.utilities.io_uitls import load_tensors, save_tensors
 from fedrec.utilities.serialization_utils import serializer_of
+from fedrec.data_models.state_dict_model import StateTensorDict
 
 
-@serializer_of(torch.Tensor)
+@serializer_of(StateTensorDict)
 class TensorSerializer(AbstractSerializer):
     """
     TensorSerializer serializes and deserializes torch tensors.
@@ -37,12 +38,12 @@ class TensorSerializer(AbstractSerializer):
         if path:
             # if file is provided, save the tensor
             # to the file and return the file path.
-            save_tensor(tensor, path)
+            save_tensors(tensor, path)
             return path
         else:
             # create a buffer Bytes object,
             # which can be used to write to the file.
-            save_tensor(tensor)
+            save_tensors(tensor)
             return path
 
     @classmethod
@@ -61,5 +62,5 @@ class TensorSerializer(AbstractSerializer):
             The deserialized object.
         """
   
-        tensor = load_tensor(path)
+        tensor = load_tensors(path)
         return tensor

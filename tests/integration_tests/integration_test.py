@@ -1,15 +1,13 @@
-import sys
-sys.path.append("/home/ramesht/origin/RecoEdge")
 import collections
 from abc import abstractproperty
-from typing import Callable, Dict
+from typing import Dict
 
-import experiments
 import fedrec
+import experiments
 import fl_strategies
 import yaml
-from fedrec.data_models.job_submit_model import JobSubmitMessage
 from fedrec.data_models.job_response_model import JobResponseMessage
+from fedrec.data_models.job_submit_model import JobSubmitMessage
 from fedrec.python_executors.aggregator import Aggregator, Neighbour
 from fedrec.python_executors.base_actor import BaseActor
 from fedrec.python_executors.trainer import Trainer
@@ -66,7 +64,8 @@ class TestTrainer(AbstractTester):
     def worker(self):
         return Trainer(worker_index=0,
                        config=self.config,
-                       logger=self.logger)
+                       logger=self.logger,
+                       )
 
     def test_training_method(self):
         # create JobSubmitMessage with Job_type="train"
@@ -114,7 +113,8 @@ class TestAggregator(AbstractTester):
         return Aggregator(worker_index=0, config=config,
                           logger=self.logger,
                           in_neighbours=self.in_neighbours,
-                          out_neighbours=self.out_neighbours)
+                          out_neighbours=self.out_neighbours,
+                          )
 
     def test_aggregation(self):
         response: JobResponseMessage = self.submit_message(

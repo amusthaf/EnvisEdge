@@ -1,7 +1,7 @@
 import torch
+from fedrec.utilities.serialization_utils import Serializable
 
-
-class StateTensorDict():
+class StateTensorDict(Serializable):
     def __init__(
             self,
             storage,
@@ -22,6 +22,9 @@ class StateTensorDict():
              self.state_type])
 
     def get_state_path(self) -> str:
-        return self.storage+"/"+self.get_state_name()+".pt"
+        return str(self.storage)+"/"+str(self.get_state_name())+".pt"
+
+    def get_state_dict(self):
+        return self.state
 
 

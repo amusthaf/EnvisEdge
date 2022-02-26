@@ -62,11 +62,10 @@ class Aggregator(BaseActor, ABC):
                  logger: BaseLogger,
                  in_neighbours: Dict[int, Neighbour] = None,
                  out_neighbours: Dict[int, Neighbour] = None,
-                 persistent_storage: str = None,
                  is_mobile: bool = True,
                  round_idx: int = 0):
         super().__init__(worker_index, config, logger,
-                         persistent_storage, is_mobile, round_idx)
+                         is_mobile, round_idx)
         self.in_neighbours = in_neighbours
         self.out_neighbours = out_neighbours
         # TODO update trainer logic to avoid double model initialization

@@ -1,14 +1,14 @@
 from abc import ABC, abstractclassmethod, abstractmethod
 from distutils.log import error
 from typing import Dict
-
+import os
 import attr
 import torch
 from fedrec.preprocessor import PreProcessor
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
-from fedrec.utilities.random_state import RandomizationConfig, Reproducible
-from data_models.state_dict_model import StateTensorDict
+from fedrec.utilities.random_state import Reproducible
+from fedrec.data_models.state_dict_model import StateTensorDict
 
 
 class BaseActor(Reproducible, ABC):
@@ -33,7 +33,6 @@ class BaseActor(Reproducible, ABC):
                  worker_index: int,
                  config: Dict,
                  logger: BaseLogger,
-                 persistent_storage: str = None,
                  is_mobile: bool = True,
                  round_idx: int = 0):
 
@@ -41,7 +40,11 @@ class BaseActor(Reproducible, ABC):
         self.round_idx = round_idx
         self.worker_index = worker_index
         self.is_mobile = is_mobile
-        self.persistent_storage = persistent_storage
+        self.persistent_storage = (config["log_dir"]["PATH"]
+                                    +"worker_id_"
+                                    +str(self.worker_index))
+        if not os.path.exists(self.persistent_storage):
+            os.makedirs(self.persistent_storage)
         self.config = config
         self.logger = logger
 
@@ -96,7 +99,7 @@ class BaseActor(Reproducible, ABC):
             A dict containing the model weights.
         """
         return StateTensorDict(
-            storgae = self.persistent_storage,
+            storage = self.persistent_storage,
             worker_id=self.worker_index,
             state_dict=self.model.cpu().state_dict(),
             round_idx=self.round_idx,
@@ -105,7 +108,7 @@ class BaseActor(Reproducible, ABC):
     def _get_optimizer_params(self):
         if self._optimizer is not None:
             return StateTensorDict(
-                storgae = self.persistent_storage,
+                storage = self.persistent_storage,
                 worker_id=self.worker_index,
                 state_dict=self.optimizer.state_dict(),
                 round_idx=self.round_idx,
