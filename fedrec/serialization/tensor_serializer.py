@@ -1,12 +1,10 @@
-import torch
-from fedrec.utilities import registry
+from fedrec.data_models.state_tensors_model import StateTensors
 from fedrec.serialization.abstract_serializer import AbstractSerializer
 from fedrec.utilities.io_uitls import load_tensors, save_tensors
 from fedrec.utilities.serialization_utils import serializer_of
-from fedrec.data_models.state_dict_model import StateTensorDict
 
 
-@serializer_of(StateTensorDict)
+@serializer_of(StateTensors)
 class TensorSerializer(AbstractSerializer):
     """
     TensorSerializer serializes and deserializes torch tensors.
@@ -61,6 +59,6 @@ class TensorSerializer(AbstractSerializer):
         deserialized_obj: object
             The deserialized object.
         """
-  
+
         tensor = load_tensors(path)
         return tensor

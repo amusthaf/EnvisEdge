@@ -5,8 +5,7 @@ from collections.abc import Iterable
 import yaml
 import numpy as np
 import torch
-from fedrec.data_models.state_dict_model import StateTensorDict
-from fedrec.data_models.fl_tensor_model import StateTensor
+from fedrec.data_models.state_tensors_model import StateTensors
 
 def load_tensors(path):
     if os.path.isfile(path) == True:
@@ -32,8 +31,7 @@ def to_dict_with_set_values(d):
         result[k] = set(hashable_v)
     return result
 
-#: Union(StateTensorDict,StateTensor)
-def save_tensors(tensors, path=None) -> str:
+def save_tensors(tensors: StateTensors, path=None) -> str:
     if path:
         if os.path.isfile(path) == True:
             torch.save(tensors, path)
@@ -41,9 +39,9 @@ def save_tensors(tensors, path=None) -> str:
         else:
             raise ValueError("Path does not exist.")
     else:
-        completeName = os.path.join(tensors.get_state_path())
+        completeName = os.path.join(tensors.get_path())
         file1 = open(completeName, "wb")
-        torch.save(tensors.get_state_dict(), file1) # state.tensor
+        torch.save(tensors.get_torch_obj(), file1)
         return completeName
 
 

@@ -8,7 +8,7 @@ from fedrec.preprocessor import PreProcessor
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
 from fedrec.utilities.random_state import Reproducible
-from fedrec.data_models.state_dict_model import StateTensorDict
+from fedrec.data_models.state_tensors_model import StateTensors
 
 
 class BaseActor(Reproducible, ABC):
@@ -98,21 +98,21 @@ class BaseActor(Reproducible, ABC):
         Dict:
             A dict containing the model weights.
         """
-        return StateTensorDict(
+        return StateTensors(
             storage = self.persistent_storage,
             worker_id=self.worker_index,
-            state_dict=self.model.cpu().state_dict(),
+            tensors=self.model.cpu().state_dict(),
             round_idx=self.round_idx,
-            state_type=self.name)
+            tensor_type=self.name)
 
     def _get_optimizer_params(self):
         if self._optimizer is not None:
-            return StateTensorDict(
+            return StateTensors(
                 storage = self.persistent_storage,
                 worker_id=self.worker_index,
-                state_dict=self.optimizer.state_dict(),
+                tensors=self.optimizer.state_dict(),
                 round_idx=self.round_idx,
-                state_type=self.name)
+                tensor_type=self.name)
         else:
             raise ValueError("No optimizer found")
 
