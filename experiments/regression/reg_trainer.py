@@ -8,14 +8,14 @@ from fedrec.utilities.logger import BaseLogger
 
 
 @attr.s
-class DLRMTrainConfig:
+class RegressionConfig:
     eval_every_n = attr.ib(default=10000)
     report_every_n = attr.ib(default=10)
     save_every_n = attr.ib(default=2000)
     keep_every_n = attr.ib(default=10000)
 
-    batch_size = attr.ib(default=128)
-    eval_batch_size = attr.ib(default=256)
+    batch_size = attr.ib(default=32)
+    eval_batch_size = attr.ib(default=128)
     num_epochs = attr.ib(default=-1)
 
     num_batches = attr.ib(default=-1)
@@ -34,8 +34,8 @@ class DLRMTrainConfig:
     pin_memory = attr.ib(default=True)
 
 
-@registry.load('trainer', 'dlrm')
-class DLRMTrainer(BaseTrainer):
+@registry.load('trainer', 'regression')
+class RegressionTrainer(BaseTrainer):
 
     def __init__(
             self,
@@ -43,6 +43,6 @@ class DLRMTrainer(BaseTrainer):
             logger: BaseLogger) -> None:
 
         super().__init__(config_dict, logger)
-        self.train_config = DLRMTrainConfig(
+        self.train_config = RegressionConfig(
             **config_dict["trainer"]["config"]
         )
