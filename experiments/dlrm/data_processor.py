@@ -7,17 +7,9 @@ from fedrec.utilities import registry
 class DLRMPreprocessor(PreProcessor):
     def __init__(
             self,
-            datafile,
-            output_file,
-            dataset_config):
-        self.dataset_config = dataset_config
-        self.datafile = datafile
-        self.output_file = output_file
-        self.dataset_processor = registry.construct(
-            'dataset', self.dataset_config,
-            unused_keys=(),
-            datafile=self.datafile,
-            output_file=self.output_file)
+            dataset_config,
+            client_id=0):
+        super().__init__(dataset_config, client_id)
         self.m_den = None
         self.n_emb = None
         self.ln_emb = None
@@ -32,20 +24,6 @@ class DLRMPreprocessor(PreProcessor):
         self.m_den = self.dataset_processor.m_den
         self.n_emb = self.dataset_processor.n_emb
         self.ln_emb = self.dataset_processor.ln_emb
-
-    def load(self):
-        self.dataset_processor.load()
-
-    def datasets(self, *splits):
-        assert all([isinstance(split, str) for split in splits])
-        return {
-            split: self.dataset_processor.dataset(split)
-            for split in splits
-        }
-
-    def dataset(self, split):
-        assert isinstance(split, str)
-        return self.dataset_processor.dataset(split)
 
     def data_loader(self, data, **kwargs):
         return torch.utils.data.DataLoader(

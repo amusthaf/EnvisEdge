@@ -1,11 +1,9 @@
-
 import sys
 
 import torch
-from fedrec.preprocessor import RegressionPreprocessor
+from data_processor import RegressionPreprocessor
 from fedrec.utilities import registry
 from torch import nn, sigmoid
-from torch.nn.parameter import Parameter
 
 ### define LogisticRegression in PyTorch ###
 
