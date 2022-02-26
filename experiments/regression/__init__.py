@@ -1,2 +1,2 @@
-from . import reg_model
-from . import reg_trainer
+from . import net
+from . import trainer

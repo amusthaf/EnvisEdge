@@ -17,7 +17,7 @@ from torch.multiprocessing import Manager, Process
 # split (bool) : to split into train, test, validation data-sets
 
 
-@registry.load('dset_proc', 'kaggle')
+@registry.load('dataset', 'kaggle')
 class CriteoDataProcessor:
     def __init__(
             self,

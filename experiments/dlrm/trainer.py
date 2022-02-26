@@ -2,7 +2,6 @@ from typing import Dict
 
 import attr
 from fedrec.base_trainer import BaseTrainer
-from fedrec.preprocessor import PreProcessor
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
 

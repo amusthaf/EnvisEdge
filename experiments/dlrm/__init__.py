@@ -1,2 +1,3 @@
-from . import dlrm_net
-from . import dlrm_trainer
+from . import net
+from . import trainer
+from . import data_processor
