@@ -5,6 +5,8 @@ from fedrec.utilities import registry
 
 @registry.load('preproc', 'dlrm')
 class DLRMPreprocessor(PreProcessor):
+    REGISTERED_NAME = 'dlrm'
+
     def __init__(
             self,
             dataset_config,

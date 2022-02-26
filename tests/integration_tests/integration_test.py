@@ -1,4 +1,5 @@
 from abc import abstractproperty
+from argparse import ArgumentParser
 from typing import Dict
 
 import fedrec
@@ -131,8 +132,8 @@ class TestAggregator(AbstractTester):
             print(f"Worker State {response.get_worker_state()}")
 
     def test_sample_client(self,
-                       round_idx,
-                       client_num_per_round):
+                           round_idx,
+                           client_num_per_round):
         response: JobResponseMessage = self.submit_message(
             senderid=self.worker.worker_index,
             receiverid=self.worker.worker_index,
@@ -147,11 +148,15 @@ class TestAggregator(AbstractTester):
 
 if __name__ == "__main__":
 
+    parser = ArgumentParser()
+    parser.add_argument("--config", type=str, required=True)
+    parser.add_argument("--logdir", type=str, default=None)
+    args = parser.parse_args()
 
-    with open("./configs/dlrm_fl.yml", 'r') as cfg:
-        config = yaml.load(cfg, Loader=yaml.FullLoader)
+    with open(args.config, "r") as stream:
+        config = yaml.safe_load(stream)
 
-    print(config['model'])
+    print(config)
     # start trainer
     test_trainer = TestTrainer(config=config)
     test_trainer.test_training_method()
@@ -160,5 +165,3 @@ if __name__ == "__main__":
     test_aggregator = TestAggregator(config=config)
     test_aggregator.test_aggregation()
     test_aggregator.test_sample_client()
-
-

@@ -1,2 +1,2 @@
-from . import kafka_interfaces
-from . import zeroMQ_interfaces
+from . import kafka_interface
+from . import zeroMQ_interface

@@ -11,7 +11,7 @@ class TrainerStateSerializer(AbstractSerializer):
     def __init__(self, serialization_strategy):
         super().__init__(serialization_strategy)
 
-    def serialize(self, obj):
+    def serialize(self, obj: TrainerState):
 
         response_dict = {}
         response_dict["id"] = obj.id

@@ -6,7 +6,10 @@ model :
   loss_function: "mse"
 
   preproc :
-    data_dir : "/home/ramesht/dataset"
+    dataset_config:
+      name : "femnist"
+      data_dir : "/home/ubuntu/dataset/femnist"
+      splits : ["train", "test", "val"]
 
 multiprocessing:
   num_aggregators : 1
@@ -15,7 +18,7 @@ multiprocessing:
   process_manager : 
     name : "ray"
     
-  communications : 
+  communication_interface : 
     name : "kafka"
     serializer : "json"
     consumer : True
@@ -43,7 +46,7 @@ trainer :
     lr : 0.001
     
   lr_scheduler :
-    name : "regression"
+    name : "dlrm"
     num_warmup_steps : 300
     decay_start_step : 1500
     num_decay_steps : 1500
@@ -55,3 +58,6 @@ random:
   data_seed : 100
   init_seed : 100
   model_seed : 100
+
+log_dir:
+  PATH: "/home/varun/dump_tensor/"

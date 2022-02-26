@@ -73,10 +73,12 @@ class Aggregator(BaseActor, ABC):
                                          config['aggregator'],
                                          in_neighbours=in_neighbours,
                                          out_neighbours=out_neighbours)
-        # self.worker_funcs =
-        # {func_name: getattr(self.worker, func_name) for func_name in dir(
-        #     self.worker) if callable(getattr(self.worker, func_name))}
-        self.worker_funcs = {"test_run": getattr(self.worker, "test_run")}
+        self.worker_funcs = {
+            func_name: getattr(self.worker, func_name)
+            for func_name in dir(self.worker)
+            if callable(getattr(self.worker, func_name))
+        }
+        # self.worker_funcs = {"test_run": getattr(self.worker, "test_run")}
 
     def serialize(self):
         """Serialise the state of the worker to a AggregatorState.

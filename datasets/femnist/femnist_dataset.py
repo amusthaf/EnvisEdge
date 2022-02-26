@@ -60,4 +60,5 @@ class FemnistDataset(torch.utils.data.Dataset):
         return img, target
 
     def __len__(self):
-        return len(self.data)
+        print(self.img_urls)
+        return len(self.img_urls)

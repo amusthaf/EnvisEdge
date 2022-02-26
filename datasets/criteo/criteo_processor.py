@@ -1,7 +1,7 @@
 
 from collections import defaultdict
 from fedrec.utilities import registry
-from criteo import CriteoDataset, collate_wrapper_criteo_length
+from datasets.criteo.criteo_dataset import CriteoDataset, collate_wrapper_criteo_length
 import os
 
 import numpy as np

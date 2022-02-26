@@ -29,10 +29,10 @@ model :
 
   
   preproc :
-    datafile : "/home/ubuntu/dataset/train.txt"
-    output_file : "kaggleAdDisplayChallenge_processed"
     dataset_config :
       name : "kaggle"
+      datafile : "/home/ubuntu/dataset/train.txt"
+      output_file : "kaggleAdDisplayChallenge_processed"
       dataset_multiprocessing : True
   
 multiprocessing:
@@ -56,7 +56,7 @@ multiprocessing:
     producer_topic : 'job-response'
 
 trainer :
-  name : dlrm
+  name : "dlrm"
   config:
     batch_size : 128
     eval_batch_size : 512
@@ -84,4 +84,4 @@ random:
   model_seed : 100
 
 log_dir:
-  PATH: "/home/ramesht/dump_tensor/"
+  PATH: "/home/varun/dump_tensor/"

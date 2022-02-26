@@ -9,6 +9,8 @@ from fedrec.utilities import registry
 
 @registry.load("dataset", "femnist")
 class FemnistProcessor:
+    REGISTERED_NAME = 'femnist'
+
     def __init__(
             self,
             data_dir,
@@ -21,10 +23,12 @@ class FemnistProcessor:
 
     def process_data(self):
         for split in self.splits:
+            print(f"preprocessing data_{split}...")
             _, df = self.process_file(split)
             self.create_index_file(split, df)
 
     def process_file(self, split) -> Tuple[str, pd.DataFrame]:
+        print("preprocessing datasset...")
         output_path = self.meta_data_dir+"/{}_processed.csv".format(split)
         if os.path.exists(output_path):
             return output_path, None
@@ -34,11 +38,13 @@ class FemnistProcessor:
         return output_path, df
 
     def sort_values(self, df: pd.DataFrame):
+        print("Sorting values...")
         df.sort_values(by=["client_id"], inplace=True)
         df.reset_index(inplace=True)
         df.drop(columns=["index"], inplace=True)
 
     def create_index_file(self, split, df: pd.DataFrame = None):
+        print("Creating index file...")
         data = []
         file_path = self.meta_data_dir + f"/{split}.csv"
         if df is None:

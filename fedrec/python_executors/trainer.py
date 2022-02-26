@@ -48,10 +48,13 @@ class Trainer(BaseActor, ABC):
             unused_keys=(),
             config_dict=config,
             logger=logger)
-        # self.worker_funcs =
-        # {func_name: getattr(self.worker, func_name) for func_name in dir(
-        #     self.worker) if callable(getattr(self.worker, func_name))}
-        self.worker_funcs = {"test_run": getattr(self.worker, "test_run")}
+
+        self.worker_funcs = {
+            func_name: getattr(self.worker, func_name)
+            for func_name in dir(self.worker)
+            if callable(getattr(self.worker, func_name))
+        }
+        #  self.worker_funcs = {"test_run": getattr(self.worker, "test_run")}
 
     def reset_loaders(self):
         self._data_loaders = {}
