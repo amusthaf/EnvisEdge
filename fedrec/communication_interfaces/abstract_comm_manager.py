@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
-from json import dumps
+from fedrec.serialization.serializable_interface import Serializable
+from fedrec.serialization.serializer_registry import deserialize_attribute
 from fedrec.utilities import registry
-from fedrec.serialization.abstract_serializer import Serializable, get_serializer
 import asyncio
 
 
@@ -57,6 +57,4 @@ class AbstractCommunicationManager(ABC):
             The deserialized message.
         """
         message = message.decode('utf-8')
-        return get_serializer(
-            message,
-        ).deserialize(message)
+        return deserialize_attribute(message)

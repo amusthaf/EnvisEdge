@@ -1,11 +1,8 @@
 import argparse
-from ctypes import Union
 import os
 from collections.abc import Iterable
-import yaml
-import numpy as np
 import torch
-from fedrec.data_models.state_tensors_model import StateTensors
+
 
 def load_tensors(path):
     if os.path.isfile(path) == True:
@@ -31,17 +28,15 @@ def to_dict_with_set_values(d):
         result[k] = set(hashable_v)
     return result
 
-def save_tensors(tensors: StateTensors, path=None) -> str:
-    if path:
-        if os.path.isfile(path) == True:
-            torch.save(tensors, path)
-            return path
-        else:
-            raise ValueError("Path does not exist.")
+
+def save_tensors(tensors, path) -> str:
+    if os.path.isfile(path) == True:
+        torch.save(tensors, path)
+        return path
     else:
-        completeName = os.path.join(tensors.get_path())
+        completeName = os.path.join(path)
         file1 = open(completeName, "wb")
-        torch.save(tensors.get_torch_obj(), file1)
+        torch.save(tensors, file1)
         return completeName
 
 

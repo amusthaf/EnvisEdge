@@ -27,9 +27,8 @@ class Serializable(ABC):
         Deserializes an object.
     """
 
-    def __init__(self, serialization_strategy) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.serialization_strategy = serialization_strategy
 
     @abstractmethod
     def serialize(self):

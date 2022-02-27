@@ -3,9 +3,9 @@ from typing import Dict, List
 from dataclasses import dataclass
 from fedrec.data_models.base_actor_state_model import ActorState
 from fedrec.data_models.messages import Message
-from fedrec.serialization.serializer_registry import deserialize_attribute
+from fedrec.serialization.serializer_registry import deserialize_attribute, register_deserializer, serialize_attribute
 
-
+@register_deserializer
 @dataclass
 class JobSubmitMessage(Message):
     '''
@@ -51,18 +51,18 @@ class JobSubmitMessage(Message):
     def serialize(self):
         response_dict = {
             "job_type": self.job_type,
-            "job_args": self.serialize_attribute(
+            "job_args": serialize_attribute(
                 self.job_args),
-            "job_kwargs": self.serialize_attribute(
+            "job_kwargs": serialize_attribute(
                 self.job_kwargs),
             "senderid": self.senderid,
             "receiverid": self.receiverid,
-            "workerstate": self.serialize_attribute(
+            "workerstate": serialize_attribute(
                 self.workerstate)
         }
 
         # self.serialization_strategy.unparse(response_dict)
-        return response_dict
+        return self.append_type(response_dict)
 
     @classmethod
     def deserialize(cls, obj):

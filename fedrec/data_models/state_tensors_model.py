@@ -1,7 +1,8 @@
 from fedrec.serialization.serializable_interface import Serializable
-from fedrec.utilities.io_uitls import load_tensors, save_tensors
+from fedrec.serialization.serializer_registry import register_deserializer
+from fedrec.utilities.io_utils import load_tensors, save_tensors
 
-
+@register_deserializer
 class StateTensors(Serializable):
     def __init__(
             self,
@@ -74,8 +75,8 @@ class StateTensors(Serializable):
         """
         # if file is provided, save the tensor
         # to the file and return the file path.
-        save_tensors(self.torch_obj, self.storage)
-        return self.storage
+        path = save_tensors(self.torch_obj, self.get_path())
+        return path
 
     @classmethod
     def deserialize(cls, path):

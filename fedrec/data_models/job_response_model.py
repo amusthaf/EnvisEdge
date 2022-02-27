@@ -3,9 +3,10 @@ from typing import Dict
 from fedrec.data_models.messages import Message
 from dataclasses import dataclass
 
-from fedrec.serialization.serializer_registry import deserialize_attribute
+from fedrec.serialization.serializer_registry import deserialize_attribute, register_deserializer, serialize_attribute
 
 
+@register_deserializer
 @dataclass
 class JobResponseMessage(Message):
     '''
@@ -46,7 +47,7 @@ class JobResponseMessage(Message):
         response_dict["job_type"] = self.job_type
         response_dict["senderid"] = self.senderid
         response_dict["receiverid"] = self.receiverid
-        response_dict["results"] = self.serialize_attribute(
+        response_dict["results"] = serialize_attribute(
             self.results)
 
         # return self.serialization_strategy.unparse(response_dict)

@@ -17,6 +17,7 @@ class Message(Serializable):
     '''
 
     def __init__(self, senderid, receiverid):
+        super().__init__()
         self.senderid = senderid
         self.receiverid = receiverid
 

@@ -1,7 +1,7 @@
 import attr
 from typing import Dict
 from fedrec.data_models.base_actor_state_model import ActorState
-from fedrec.serialization.serializer_registry import deserialize_attribute, register_deserializer
+from fedrec.serialization.serializer_registry import deserialize_attribute, register_deserializer, serialize_attribute
 
 
 @register_deserializer
@@ -30,10 +30,10 @@ class TrainerState(ActorState):
         response_dict = {}
         response_dict["id"] = self.id
         response_dict["round_idx"] = self.round_idx
-        response_dict["state_dict"] = self.serialize_attribute(
+        response_dict["state_dict"] = serialize_attribute(
             self.state_dict)
         response_dict["storage"] = self.storage
-        response_dict["model_preproc"] = self.serialize_attribute(
+        response_dict["model_preproc"] = serialize_attribute(
             self.model_preproc)
         response_dict["local_sample_number"] = self.local_sample_number
         response_dict["local_training_steps"] = self.local_training_steps
