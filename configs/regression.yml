@@ -60,4 +60,4 @@ random:
   model_seed : 100
 
 log_dir:
-  PATH: "/home/varun/dump_tensor/"
+  PATH: "/home/ramesht/dump_tensor/"

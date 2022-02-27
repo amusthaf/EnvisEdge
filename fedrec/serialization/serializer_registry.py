@@ -1,5 +1,7 @@
 from collections import defaultdict
+from http.client import ImproperConnectionState
 from typing import Dict, List, Tuple
+import ast
 
 from defusedxml import NotSupportedError
 from fedrec.serialization.serializable_interface import (Serializable,
@@ -21,9 +23,10 @@ def register_deserializer(class_ref):
 
 
 def get_deserializer(serialized_obj: Dict):
-    if "__type__" not in serialized_obj:
-        raise NotSupportedError(serialized_obj)
-    type_name = serialized_obj["__type__"]
+    # TODO : the "__type__" is coming as string, why do we need below line?
+    # if '__type__' not in serialized_obj:
+    #     raise NotSupportedError(serialized_obj)
+    type_name = serialized_obj
     if type_name in SERIALIZER_MAP:
         if type_name not in ACTIVE_SERIALIZERS:
             ACTIVE_SERIALIZERS[type_name] = SERIALIZER_MAP[type_name]
@@ -45,7 +48,8 @@ def serialize_attribute(obj):
         return obj.serialize()
 
 
-def deserialize_attribute(obj):
+def deserialize_attribute(obj: Dict):
+    # TODO :  the dictionary is coming as string here so we need to convert it to dict
     if "__type__" in obj:
         type_name = obj["__type__"]
         data = obj["__data__"]

@@ -48,6 +48,7 @@ class Jobber:
             while True:
                 print("Waiting for job request")
                 job_request = self.comm_manager.receive_message()
+                print("**************************")
                 print(
                     "Received job request"
                     + f"{job_request}, {type(job_request)} on"
@@ -56,7 +57,7 @@ class Jobber:
                 result = self.execute(job_request)
                 self.publish(result)
         except Exception as e:
-            print(f"Exception {e}")
+            print(f"Exception {e.__type__}")
             self.stop()
             
     def execute(self, message: job_submit_model):

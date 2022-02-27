@@ -4,6 +4,7 @@ from fedrec.serialization.serializable_interface import Serializable
 from fedrec.serialization.serializer_registry import deserialize_attribute
 from fedrec.utilities import registry
 import asyncio
+import ast
 
 
 class AbstractCommunicationManager(ABC):
@@ -56,5 +57,5 @@ class AbstractCommunicationManager(ABC):
         message: object
             The deserialized message.
         """
-        message = message.decode('utf-8')
+        message = ast.literal_eval(message.decode('utf-8'))
         return deserialize_attribute(message)
