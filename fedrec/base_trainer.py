@@ -1,7 +1,6 @@
 from typing import Dict
 
 import attr
-from jinja2 import BaseLoader
 import numpy as np
 import torch
 from fedrec.preprocessor import PreProcessor

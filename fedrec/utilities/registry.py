@@ -212,18 +212,15 @@ def instantiate(callable, config, unused_keys=(), **kwargs):
 
 
 class Registrable(object):
-    def __init__(self) -> None:
-        print("******************************")
-        print("Registrable class")
-        # print(LOOKUP_DICT["class_map"])
-        print("******************************")
-        self._register_class_ref()
 
     @classmethod
     def type_name(cls):
         return cls.__name__
 
-    @classmethod
-    def _register_class_ref(cls):
-        print(cls)
-        LOOKUP_DICT["class_map"][cls.type_name()] = cls
+    @staticmethod
+    def register_class_ref(class_ref):
+        assert issubclass(class_ref, Registrable), \
+            'Annotated class must be a subclass of Registrable'
+
+        LOOKUP_DICT["class_map"][class_ref.type_name()] = class_ref
+        return class_ref

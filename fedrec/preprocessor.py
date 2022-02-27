@@ -1,8 +1,10 @@
 import torch
 from fedrec.serialization.serializable_interface import Serializable
 from fedrec.utilities import registry
+from fedrec.utilities.registry import Registrable
 
 
+@Registrable.register_class_ref
 class PreProcessor(Serializable):
     def __init__(
             self,
@@ -43,7 +45,7 @@ class PreProcessor(Serializable):
 
     def serialize(self):
         output = self.append_type({
-            "proc_config": {"name": self.type_name()},
+            "proc_name": self.type_name(),
             "client_id": self.client_id,
             "dataset_config": self.dataset_config
         })
@@ -52,10 +54,7 @@ class PreProcessor(Serializable):
 
     @classmethod
     def deserialize(cls, obj):
-        preproc_cls = registry.lookup('preproc', obj['proc_config'])
-        return registry.instantiate(
-            preproc_cls,
-            obj['proc_config'],
-            unused_keys=(),
+        preproc_cls = registry.lookup_class_ref(obj['proc_name'])
+        return preproc_cls(
             dataset_config=obj["dataset_config"],
             client_id=obj["client_id"])

@@ -1,8 +1,9 @@
 import atexit
 import os
 from typing import Dict
+from fedrec.data_models.job_response_model import JobResponseMessage
+from fedrec.data_models.job_submit_model import JobSubmitMessage
 
-from fedrec.data_models import job_response_model, job_submit_model
 from fedrec.python_executors.base_actor import BaseActor
 from fedrec.utilities import registry
 
@@ -56,11 +57,11 @@ class Jobber:
                 result = self.execute(job_request)
                 self.publish(result)
         except Exception as e:
-            print(f"Exception {e__type__}")
-            self.stop()
-            
-    def execute(self, message: job_submit_model):
-        result_message = job_response_model(
+            print(f"Exception {e}")
+            self.stop(False)
+
+    def execute(self, message: JobSubmitMessage) -> JobResponseMessage:
+        result_message = JobResponseMessage(
             job_type=message.job_type,
             senderid=message.receiverid,
             receiverid=message.senderid)
@@ -76,11 +77,12 @@ class Jobber:
             result_message.errors = e
         return result_message
 
-    def publish(self, job_result: job_response_model) -> None:
+    def publish(self, job_result: JobResponseMessage) -> None:
         """
         Publishes the result after executing the job request
         """
         self.comm_manager.send_message(job_result)
 
-    def stop(self) -> None:
+    def stop(self, success=True) -> None:
         self.comm_manager.finish()
+        os._exit(success)

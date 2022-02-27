@@ -4,8 +4,10 @@ import attr
 from fedrec.data_models.base_actor_state_model import ActorState
 from fedrec.serialization.serializer_registry import (deserialize_attribute,
                                                       serialize_attribute)
+from fedrec.utilities.registry import Registrable
 
 
+@Registrable.register_class_ref
 @attr.s(kw_only=True)
 class TrainerState(ActorState):
     """Construct a workerState object to reinstatiate a worker when needed.

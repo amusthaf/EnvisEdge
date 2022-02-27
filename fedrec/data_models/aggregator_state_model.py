@@ -2,6 +2,7 @@ from typing import Dict, List
 import attr
 from fedrec.data_models.base_actor_state_model import ActorState
 from fedrec.serialization.serializer_registry import deserialize_attribute, serialize_attribute
+from fedrec.utilities.registry import Registrable
 
 
 @attr.s
@@ -32,6 +33,7 @@ class Neighbour:
                 setattr(self, k, v)
 
 
+@Registrable.register_class_ref
 class AggregatorState(ActorState):
     """Construct a AggregatorState object to reinstatiate a worker when needed.
 

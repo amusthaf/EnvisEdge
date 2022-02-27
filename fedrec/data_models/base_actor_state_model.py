@@ -1,8 +1,8 @@
 import attr
 
 from fedrec.serialization.serializable_interface import Serializable
-
-
+from fedrec.utilities.registry import Registrable
+@Registrable.register_class_ref
 @attr.s(kw_only=True)
 class ActorState(Serializable):
     """Construct a ActorState object to reinstatiate an actor when needed.

@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
 from fedrec.serialization.serializable_interface import Serializable
+from fedrec.utilities.registry import Registrable
 
-
+@Registrable.register_class_ref
 @dataclass
 class Message(Serializable):
     '''

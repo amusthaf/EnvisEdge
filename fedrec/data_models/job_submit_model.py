@@ -4,7 +4,9 @@ from dataclasses import dataclass
 from fedrec.data_models.base_actor_state_model import ActorState
 from fedrec.data_models.messages import Message
 from fedrec.serialization.serializer_registry import deserialize_attribute, serialize_attribute
+from fedrec.utilities.registry import Registrable
 
+@Registrable.register_class_ref
 @dataclass
 class JobSubmitMessage(Message):
     '''

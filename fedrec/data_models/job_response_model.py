@@ -4,8 +4,9 @@ from fedrec.data_models.messages import Message
 from dataclasses import dataclass
 
 from fedrec.serialization.serializer_registry import deserialize_attribute, serialize_attribute
+from fedrec.utilities.registry import Registrable
 
-
+@Registrable.register_class_ref
 @dataclass
 class JobResponseMessage(Message):
     '''
