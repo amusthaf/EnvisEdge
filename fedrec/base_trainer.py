@@ -40,6 +40,7 @@ class TrainConfig:
 
     num_workers = attr.ib(default=0)
     pin_memory = attr.ib(default=True)
+    log_gradients = attr.ib(default=False)
 
 
 class BaseTrainer(Reproducible):
@@ -178,14 +179,14 @@ class BaseTrainer(Reproducible):
             t_loader = tqdm(enumerate(loader), unit="batch", total=total_len)
             for i, testBatch in t_loader:
                 # early exit if nbatches was set by the user and was exceeded
-                if (num_eval_batches is not None) and (i >= num_eval_batches):
+                if (num_eval_batches > 0) and (i >= num_eval_batches):
                     break
                 t_loader.set_description(f"Running {eval_section}")
 
-                inputs, true_labels = map_to_cuda(testBatch, non_blocking=True)
+                inputs, true_labels = testBatch
 
                 # forward pass
-                Z_test = model.get_scores(model(*inputs))
+                Z_test = model.get_scores(model(inputs))
 
                 S_test = Z_test.detach().cpu().numpy()  # numpy array
                 T_test = true_labels.detach().cpu().numpy()  # numpy array
@@ -274,10 +275,10 @@ class BaseTrainer(Reproducible):
                 t_loader.set_description(f"Training Epoch {current_epoch}")
 
                 # Quit if too long
-                if self.train_config.num_batches > 0 &\
+                if self.train_config.num_batches > 0 and\
                         last_step >= self.train_config.num_batches:
                     break
-                if self.train_config.num_epochs > 0 &\
+                if self.train_config.num_epochs > 0 and\
                         current_epoch >= self.train_config.num_epochs:
                     break
 
@@ -307,9 +308,8 @@ class BaseTrainer(Reproducible):
 
                 # Compute and apply gradient
                 with self.model_random:
-                    input, true_label = map_to_cuda(
-                        batch, non_blocking=True)
-                    output = self.model(*input)
+                    input, true_label = batch
+                    output = self.model(input)
                     loss = self.model.loss(output, true_label)
                     self.optimizer.zero_grad()
                     loss.backward()

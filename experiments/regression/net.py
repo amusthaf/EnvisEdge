@@ -37,9 +37,9 @@ class Regression_Net(nn.Module):
         # specify the loss function
         if self.loss_function == "mse":
             self.loss_fn = torch.nn.MSELoss(reduction="mean")
-        elif self.loss_function == "bce":
-            self.loss_fn = torch.nn.BCEWithLogitsLoss(
-                reduction="mean", pos_weight=loss_weights)
+        elif self.loss_function == "ce":
+            self.loss_fn = torch.nn.CrossEntropyLoss(
+                reduction="mean")
         else:
             sys.exit(
                 "ERROR: --loss_function="
@@ -48,7 +48,7 @@ class Regression_Net(nn.Module):
             )
 
     def forward(self, x):
-        out = self.linear(x)
+        out = self.linear(x.reshape(-1, self.input_dim))
 
         if 0.0 < self.loss_threshold and self.loss_threshold < 1.0:
             out = torch.clamp(out, min=self.loss_threshold,
@@ -61,5 +61,5 @@ class Regression_Net(nn.Module):
     def loss(self, logits, true_label):
         if self.loss_function == "mse":
             return self.loss_fn(self.get_scores(logits), true_label)
-        elif self.loss_function == "bce":
+        elif self.loss_function == "ce":
             return self.loss_fn(logits, true_label)
