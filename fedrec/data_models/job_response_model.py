@@ -39,3 +39,21 @@ class JobResponseMessage(Message):
             return True
         else:
             return False
+
+    def serialize(self, obj):
+        response_dict = {}
+        response_dict["job_type"] = obj.job_type
+        response_dict["senderid"] = obj.senderid
+        response_dict["receiverid"] = obj.receiverid
+        response_dict["results"] = self.serialize_attribute(
+            obj.results)
+
+        # return self.serialization_strategy.unparse(response_dict)
+        return response_dict
+
+    def deserialize(self, obj: Dict):
+        obj = self.serialization_strategy.parse(obj)
+
+        return JobResponseMessage(obj["job_type"],
+                                  obj["senderid"],
+                                  obj["receiverid"])

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from fedrec.utilities.serialization_utils import Serializable
 
+from fedrec.serialization.abstract_serializer import Serializable
 
 
 @dataclass
