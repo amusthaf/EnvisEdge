@@ -18,17 +18,30 @@ from fedrec.utilities.logger import NoOpLogger
 
 class AbstractTester():
     def __init__(self,
-                 config: Dict) -> None:
+                 config: Dict,
+                 type: str) -> None:
         self.config = config
+        com_manager_config = config["multiprocessing"]["communication_interface"]
+       # append worker infromation to dictionary
 
+        temp = com_manager_config["producer_topic"]
+        com_manager_config["producer_topic"] = com_manager_config[
+            "consumer_topic"] + "-" + type
+
+        com_manager_config["consumer_topic"] = temp + "-" + type
+
+        print(com_manager_config)
         self.comm_manager = registry.construct(
             "communication_interface",
-            config=config["multiprocessing"]["communication_interface"])
+            config=com_manager_config)
 
         self.logger = NoOpLogger()
 
     def send_message(self, message):
         return self.comm_manager.send_message(message)
+
+    def receive_message(self):
+        return self.comm_manager.receive_message()
 
     @abstractproperty
     def worker(self) -> BaseActor:
@@ -50,6 +63,7 @@ class AbstractTester():
         # send the meesgae over to kafka using producer
         self.send_message(message)
         # receive message from consumer
+        print("sent message")
         return self.receive_message()
 
 
@@ -59,13 +73,14 @@ class TestTrainer(AbstractTester):
 
     def __init__(self,
                  config: Dict) -> None:
-        super().__init__(config)
+        super().__init__(config, "trainer")
 
     @property
     def worker(self):
         return Trainer(worker_index=0,
                        config=self.config,
-                       logger=self.logger,
+                       logger=NoOpLogger(),
+                       client_id=2
                        )
 
     def test_training_method(self):
@@ -105,7 +120,7 @@ class TestAggregator(AbstractTester):
                  config: Dict,
                  in_neighbours: Dict[int, Neighbour] = None,
                  out_neighbours: Dict[int, Neighbour] = None):
-        super().__init__(config)
+        super().__init__(config, "aggregator")
         self.in_neighbours = in_neighbours
         self.out_neighbours = out_neighbours
 

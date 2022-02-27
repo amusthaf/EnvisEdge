@@ -19,7 +19,8 @@ class JobResponseSerializer(AbstractSerializer):
         response_dict["results"] = self.serialize_attribute(
             obj.results)
 
-        return self.serialization_strategy.unparse(response_dict)
+        # return self.serialization_strategy.unparse(response_dict)
+        return response_dict
 
     def deserialize(self, obj: Dict):
         obj = self.serialization_strategy.parse(obj)

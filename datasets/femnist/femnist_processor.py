@@ -46,7 +46,7 @@ class FemnistProcessor:
     def create_index_file(self, split, df: pd.DataFrame = None):
         print("Creating index file...")
         data = []
-        file_path = self.meta_data_dir + f"/{split}.csv"
+        file_path = self.meta_data_dir + f"/{split}_processed.csv"
         if df is None:
             df = df.read_csv(file_path)
 
@@ -63,7 +63,9 @@ class FemnistProcessor:
 
     def load_meta_data(self, split, start_offset, num_samples):
         df_values = pd.read_csv(
-            self.meta_data_dir + f"/{split}.csv",
+            self.meta_data_dir + f"/{split}_processed.csv",
+            names=["index", "client_id", "sample_path",
+                   "label_name", "label_id"],
             skiprows=start_offset,
             nrows=num_samples,
             delimiter=","
@@ -73,10 +75,13 @@ class FemnistProcessor:
             df_values["label_id"].to_list()
         )
 
-    def load(self, client_id=0):
+    def load(self, client_id=None):
+        if client_id is None:
+            raise NotImplementedError
         for split in self.splits:
             df_index = pd.read_csv(self.meta_data_dir + f"/{split}_index.csv")
-            start_idx, end_idx = df_index.iloc[client_id]
+            start_idx = df_index.iloc[client_id]["startindex"]
+            end_idx = df_index.iloc[client_id]["lastindex"]
             # load meta file to get labels
             self.img_urls[split], self.labels[split] = self.load_meta_data(
                 split, start_idx, end_idx)

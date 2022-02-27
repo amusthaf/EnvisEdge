@@ -1,4 +1,5 @@
 import atexit
+import os
 from typing import Dict
 
 from fedrec.data_models import job_response_model, job_submit_model
@@ -57,7 +58,7 @@ class Jobber:
         except Exception as e:
             print(f"Exception {e}")
             self.stop()
-
+            
     def execute(self, message: job_submit_model):
         result_message = job_response_model(
             job_type=message.job_type,

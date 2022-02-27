@@ -6,13 +6,6 @@ from defusedxml import NotSupportedError
 SERIALIZER_MAP = defaultdict(dict)
 ACTIVE_SERIALIZERS = defaultdict(dict)
 
-class Serializable(object):
-
-    @classmethod
-    def type_name(cls):
-        return cls.__name__
-
-
 def serializer_of(serialized_class):
     assert issubclass(serialized_class, Serializable), (
         NotSupportedError(serialized_class))
@@ -28,13 +21,10 @@ def serializer_of(serialized_class):
 
 def get_serializer(serialized_obj, srl_strategy):
     cls = None
-    print(f"serializer : {ACTIVE_SERIALIZERS}")
-    print(f"map : {SERIALIZER_MAP}")
     if isinstance(serialized_obj, Serializable):
         cls = serialized_obj.type_name()
     else:
         raise NotSupportedError(serialized_obj)
-    print(f"cls : {cls}")
     if cls in SERIALIZER_MAP:
         if cls not in ACTIVE_SERIALIZERS:
             ACTIVE_SERIALIZERS[cls] = SERIALIZER_MAP[cls](srl_strategy)

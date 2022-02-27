@@ -15,6 +15,7 @@ from fedrec.utilities.logger import BaseLogger
 
 from fedrec.utilities.random_state import Reproducible
 
+
 @attr.s
 class TrainConfig:
     eval_every_n = attr.ib(default=10000)
@@ -41,20 +42,24 @@ class TrainConfig:
     num_workers = attr.ib(default=0)
     pin_memory = attr.ib(default=True)
 
+
 class BaseTrainer(Reproducible):
     def __init__(
             self,
             config_dict: Dict,
-            logger: BaseLogger) -> None:
+            logger: BaseLogger,
+            client_id=None) -> None:
 
         super().__init__(config_dict["random"])
         self.config_dict = config_dict
+        self.client_id = client_id
         self.train_config = TrainConfig(**config_dict["trainer"]["config"])
         self.logger = logger
         modelCls = registry.lookup('model', config_dict["model"])
         self.model_preproc: PreProcessor = registry.instantiate(
             modelCls.Preproc,
-            config_dict["model"]['preproc'])
+            config_dict["model"]['preproc'], unused_keys=(),
+            client_id=client_id)
 
         self._model = None
         self._data_loaders = {}
@@ -122,6 +127,8 @@ class BaseTrainer(Reproducible):
     def data_loaders(self):
         if self._data_loaders:
             return self._data_loaders
+        # TODO : FIX if not client_id will load whole dataset
+        self.model_preproc.load()
         # 3. Get training data somewhere
         with self.data_random:
             train_data = self.model_preproc.dataset('train')

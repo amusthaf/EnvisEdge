@@ -24,7 +24,8 @@ class TrainerStateSerializer(AbstractSerializer):
         response_dict["local_sample_number"] = obj.local_sample_number
         response_dict["local_training_steps"] = obj.local_training_steps
 
-        return self.serialization_strategy.unparse(response_dict)
+        # return self.serialization_strategy.unparse(response_dict)
+        return response_dict
 
     def deserialize(self, obj: Dict):
         obj = self.serialization_strategy.parse(obj)

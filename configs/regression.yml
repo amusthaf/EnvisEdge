@@ -13,14 +13,14 @@ model :
 
 multiprocessing:
   num_aggregators : 1
-  num_trainers : 1
+  num_trainers : 5
 
   process_manager : 
     name : "ray"
     
   communication_interface : 
     name : "kafka"
-    serializer : "json"
+    serialization : "json"
     consumer : True
     producer : True
     consumer_port : 9092
@@ -38,10 +38,10 @@ trainer :
     eval_batch_size : 128
     eval_every_n : 100
     save_every_n : 500
-    num_workers : 10
+    num_workers : 1
 
   optimizer :
-    name : "adam"
+    name : "sgd"
     momentum : 0.9
     lr : 0.001
     

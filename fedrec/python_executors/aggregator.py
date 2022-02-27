@@ -2,38 +2,10 @@ from abc import ABC, abstractmethod
 from typing import Dict
 
 import attr
-from fedrec.data_models.aggregator_state_model import AggregatorState
+from fedrec.data_models.aggregator_state_model import AggregatorState, Neighbour
 from fedrec.python_executors.base_actor import BaseActor
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
-
-
-@attr.s
-class Neighbour:
-    """A class that represents a new Neighbour instance.
-
-    Attributes
-    ----------
-    id : int
-        Unique identifier for the worker
-    model : Dict
-        Model weights of the worker
-    sample_num : int
-        Number of datapoints in the neighbour's local dataset
-    last_sync : int
-        Last cycle when the models were synced
-    """
-    id = attr.ib()
-    model = attr.ib(None)
-    sample_num = attr.ib(None)
-    last_sync = attr.ib(-1)
-
-    def update(self, kwargs):
-        for k, v in kwargs:
-            if k == 'id' and v != self.id:
-                return
-            if hasattr(self, k):
-                setattr(self, k, v)
 
 
 class Aggregator(BaseActor, ABC):
@@ -73,6 +45,7 @@ class Aggregator(BaseActor, ABC):
                                          config['aggregator'],
                                          in_neighbours=in_neighbours,
                                          out_neighbours=out_neighbours)
+        # TODO : Check why it is calling dataloaders.
         self.worker_funcs = {
             func_name: getattr(self.worker, func_name)
             for func_name in dir(self.worker)

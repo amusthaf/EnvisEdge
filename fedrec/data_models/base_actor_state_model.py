@@ -1,5 +1,7 @@
 import attr
-from fedrec.utilities.serialization_utils import Serializable
+
+from fedrec.serialization.abstract_serializer import Serializable
+
 
 @attr.s(kw_only=True)
 class ActorState(Serializable):

@@ -21,7 +21,7 @@ class SerializationStrategy(ABC):
         raise NotImplementedError()
 
 
-class AbstractSerializer(ABC):
+class Serializable(ABC):
     """Abstract class for serializers and deserializers.
 
     Attributes:
@@ -40,6 +40,10 @@ class AbstractSerializer(ABC):
     def __init__(self, serialization_strategy) -> None:
         super().__init__()
         self.serialization_strategy = serialization_strategy
+
+    @classmethod
+    def type_name(cls):
+        return cls.__name__
 
     def get_class_serializer(self, obj):
         return get_serializer(obj, self.serialization_strategy)

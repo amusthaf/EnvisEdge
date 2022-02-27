@@ -9,7 +9,7 @@ from torch import nn, sigmoid
 
 
 @registry.load("model", "regression")
-class Regression(nn.Module):
+class Regression_Net(nn.Module):
     Preproc = RegressionPreprocessor
 
     def __init__(
@@ -22,7 +22,7 @@ class Regression(nn.Module):
         ndevices=-1,
         loss_function="mse"
     ):
-        super(Regression, self).__init__()
+        super().__init__()
         self.preproc = preprocessor
         self.ndevices = ndevices
         self.output_dim = output_dim

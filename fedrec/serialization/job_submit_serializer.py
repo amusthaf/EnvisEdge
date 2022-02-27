@@ -13,7 +13,6 @@ class JobSubmitSerializer(AbstractSerializer):
         super().__init__(serialization_strategy)
 
     def serialize(self, obj):
-        print(obj.job_args)
         response_dict = {}
         response_dict["job_type"] = obj.job_type
         response_dict["job_args"] = [self.serialize_attribute(arg)
@@ -25,10 +24,12 @@ class JobSubmitSerializer(AbstractSerializer):
         response_dict["worker_state"] = self.serialize_attribute(
             obj.workerstate)
 
-        return self.serialization_strategy.unparse(response_dict)
+        # self.serialization_strategy.unparse(response_dict)
+        return response_dict
 
     def deserialize(self, obj):
         obj = self.serialization_strategy.parse(obj)
+        
         job_args = [self.deserialize_attribute(arg)
                     for arg in obj["job_args"]]
         job_kwargs = {kwarg_name: self.deserialize_attribute(kwarg)

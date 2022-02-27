@@ -70,7 +70,7 @@ def main():
         JobExecutor, Trainer.__name__,
         config_dict["multiprocessing"]["num_trainers"],
         actorCls=Trainer,
-        config=config_dict, logger=logger,
+        config=config_dict, logger=logger, client_id=0
     )
 
     process_manager.start(Aggregator.__name__, "run")

@@ -42,7 +42,7 @@ class Kafka(AbstractCommunicationManager):
     """
 
     def __init__(self,
-                 srl_strategy="json",
+                 serialization="json",
                  consumer=True,
                  producer=True,
                  consumer_port=9092,
@@ -52,14 +52,15 @@ class Kafka(AbstractCommunicationManager):
                  producer_port=9092,
                  producer_url="127.0.0.1",
                  producer_topic=None):
-        super().__init__(srl_strategy)
+        super().__init__(serialization)
 
         if producer:
             self.producer_url = "{}:{}".format(
                 producer_url, producer_port)
             self.producer = KafkaProducer(
                 bootstrap_servers=[self.producer_url],
-                value_serializer=self.serialize)
+                value_serializer=self.serialize
+            )
             self.producer_topic = producer_topic
 
         if consumer:
@@ -70,7 +71,7 @@ class Kafka(AbstractCommunicationManager):
                 bootstrap_servers=[self.consumer_url],
                 value_deserializer=self.deserialize,
                 auto_offset_reset='latest',
-                enable_auto_commit=True,
+                enable_auto_commit=False,
                 group_id=consumer_group_id)
 
     def receive_message(self):

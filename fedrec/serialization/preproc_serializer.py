@@ -14,11 +14,13 @@ class PreprocSerializer(AbstractSerializer):
         super().__init__(serialization_strategy)
 
     def serialize(self, obj: PreProcessor):
-        return {
+        output = {
             "proc_config": {"name": obj.REGISTERED_NAME},
             "client_id": obj.client_id,
             "dataset_config": obj.dataset_config
         }
+        # return self.serialization_strategy.unparse(output)
+        return output
 
     def deserialize(self, obj):
         obj = self.serialization_strategy.parse(obj)

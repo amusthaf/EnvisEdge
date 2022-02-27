@@ -1,9 +1,3 @@
-import os
-import os.path
-
-import torch
-from PIL import Image
-
 
 class FemnistDataset(torch.utils.data.Dataset):
     """
@@ -60,4 +54,4 @@ class FemnistDataset(torch.utils.data.Dataset):
         return img, target
 
     def __len__(self):
-        return len(self.img_urls)
+        return len(self.data)

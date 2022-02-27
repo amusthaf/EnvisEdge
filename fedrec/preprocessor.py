@@ -1,9 +1,10 @@
 import torch
 
 from fedrec.utilities import registry
+from fedrec.utilities.serialization_utils import Serializable
 
 
-class PreProcessor:
+class PreProcessor(Serializable):
     def __init__(
             self,
             dataset_config,

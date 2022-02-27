@@ -39,9 +39,10 @@ class DLRMTrainer(BaseTrainer):
     def __init__(
             self,
             config_dict: Dict,
-            logger: BaseLogger) -> None:
+            logger: BaseLogger,
+            client_id=None) -> None:
 
-        super().__init__(config_dict, logger)
+        super().__init__(config_dict, logger, client_id)
         self.train_config = DLRMTrainConfig(
             **config_dict["trainer"]["config"]
         )

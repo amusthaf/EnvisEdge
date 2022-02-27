@@ -25,7 +25,8 @@ class JSONSerialization(SerializationStrategy):
         --------
         str
         """
-        return dumps(obj, indent=4).encode('utf-8')
+        return loads(obj)
+
 
     def unparse(self, obj):
         """Deserializes the json object to python object
@@ -39,5 +40,4 @@ class JSONSerialization(SerializationStrategy):
         --------
         object
         """
-
-        return loads(obj)
+        return dumps(obj, indent=4)

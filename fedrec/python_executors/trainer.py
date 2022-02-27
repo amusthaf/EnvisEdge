@@ -17,6 +17,7 @@ class Trainer(BaseActor, ABC):
                  worker_index: int,
                  config: Dict,
                  logger: BaseLogger,
+                 client_id: int,
                  is_mobile: bool = True,
                  round_idx: int = 0):
         """
@@ -41,14 +42,16 @@ class Trainer(BaseActor, ABC):
         self.local_sample_number = None
         self.local_training_steps = 10
         self._data_loaders = {}
+        self.client_id = client_id
         # TODO update trainer logic to avoid double model initialization
         self.worker = registry.construct(
             'trainer',
             config["trainer"],
             unused_keys=(),
             config_dict=config,
+            client_id=self.client_id,
             logger=logger)
-
+            
         self.worker_funcs = {
             func_name: getattr(self.worker, func_name)
             for func_name in dir(self.worker)

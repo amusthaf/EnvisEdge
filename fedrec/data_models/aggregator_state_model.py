@@ -1,9 +1,36 @@
-
+from typing import Dict, List
 import attr
 from fedrec.data_models.base_actor_state_model import ActorState
 
 
-@attr.s(kw_only=True)
+@attr.s
+class Neighbour:
+    """A class that represents a new Neighbour instance.
+
+    Attributes
+    ----------
+    id : int
+        Unique identifier for the worker
+    model : Dict
+        Model weights of the worker
+    sample_num : int
+        Number of datapoints in the neighbour's local dataset
+    last_sync : int
+        Last cycle when the models were synced
+    """
+    id = attr.ib()
+    model = attr.ib(None)
+    sample_num = attr.ib(None)
+    last_sync = attr.ib(-1)
+
+    def update(self, kwargs):
+        for k, v in kwargs:
+            if k == 'id' and v != self.id:
+                return
+            if hasattr(self, k):
+                setattr(self, k, v)
+
+
 class AggregatorState(ActorState):
     """Construct a AggregatorState object to reinstatiate a worker when needed.
 
@@ -22,5 +49,47 @@ class AggregatorState(ActorState):
         The states of in_neighbours and out_neighbours of the
         worker when last synced
     """
-    in_neighbours = attr.ib(dict)
-    out_neighbours = attr.ib(dict)
+
+    def __init__(
+        self,
+        id: int,
+        round_idx: int,
+        state_dict: Dict,
+        storage: str,
+        in_neighbours: List[Neighbour],
+        out_neighbours: List[Neighbour]
+    ) -> None:
+        super().__init__(id, round_idx, state_dict, storage)
+        self.in_neighbours = in_neighbours
+        self.out_neighbours = out_neighbours
+
+    def serialize(self, obj):
+        response_dict = {}
+        response_dict["id"] = obj.id
+        response_dict["round_idx"] = obj.round_idx
+        response_dict["state_dict"] = self.serialize_attribute(
+            obj.state_dict)
+        response_dict["storage"] = obj.storage
+        response_dict["in_neighbours"] = self.serialize_attribute(
+            obj.in_neighbours)
+        response_dict["out_neighbours"] = self.serialize_attribute(
+            obj.out_neighbours)
+        return response_dict
+        # return self.serialization_strategy.unparse(response_dict)
+
+    def deserialize(self, obj: Dict):
+        obj = self.serialization_strategy.parse(obj)
+
+        state_dict = self.deserialize_attribute(
+            obj['state_dict'])
+        in_neighbours = self.deserialize_attribute(
+            obj['in_neighbours'])
+        out_neighbours = self.deserialize_attribute(
+            obj['out_neighbours'])
+
+        return AggregatorState(id=obj['id'],
+                               round_idx=obj['round_idx'],
+                               state_dict=state_dict,
+                               storage=obj['storage'],
+                               in_neighbours=in_neighbours,
+                               out_neighbours=out_neighbours)
