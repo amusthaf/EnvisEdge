@@ -1,6 +1,7 @@
 from typing import Dict, List
 import attr
 from fedrec.data_models.base_actor_state_model import ActorState
+from fedrec.serialization.serializer_registry import deserialize_attribute
 
 
 @attr.s
@@ -79,14 +80,14 @@ class AggregatorState(ActorState):
 
     @classmethod
     def deserialize(cls, obj: Dict):
-        state_dict = cls.deserialize_attribute(
+        state_dict = deserialize_attribute(
             obj['state_dict'])
-        in_neighbours = cls.deserialize_attribute(
+        in_neighbours = deserialize_attribute(
             obj['in_neighbours'])
-        out_neighbours = cls.deserialize_attribute(
+        out_neighbours = deserialize_attribute(
             obj['out_neighbours'])
 
-        return AggregatorState(
+        return cls(
             id=obj['id'],
             round_idx=obj['round_idx'],
             state_dict=state_dict,

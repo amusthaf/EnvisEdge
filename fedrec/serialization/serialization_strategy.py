@@ -1,7 +1,18 @@
+from abc import ABC, abstractmethod
 from json import dumps, loads
 
-from fedrec.serialization.abstract_serializer import SerializationStrategy
 from fedrec.utilities import registry
+
+
+class SerializationStrategy(ABC):
+
+    @abstractmethod
+    def parse(self, obj):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def unparse(self, obj):
+        raise NotImplementedError()
 
 
 @registry.load("serialization", "json")
@@ -26,7 +37,6 @@ class JSONSerialization(SerializationStrategy):
         str
         """
         return loads(obj)
-
 
     def unparse(self, obj):
         """Deserializes the json object to python object

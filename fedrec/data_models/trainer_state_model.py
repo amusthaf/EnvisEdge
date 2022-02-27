@@ -1,7 +1,7 @@
 import attr
 from typing import Dict
 from fedrec.data_models.base_actor_state_model import ActorState
-from fedrec.utilities.serialization_utils import register_deserializer
+from fedrec.serialization.serializer_registry import deserialize_attribute, register_deserializer
 
 
 @register_deserializer
@@ -43,12 +43,12 @@ class TrainerState(ActorState):
 
     @classmethod
     def deserialize(cls, obj: Dict):
-        state_dict = cls.deserialize_attribute(
+        state_dict = deserialize_attribute(
             obj['state_dict'])
-        model_preproc = cls.deserialize_attribute(
+        model_preproc = deserialize_attribute(
             obj['model_preproc'])
 
-        return TrainerState(
+        return cls(
             id=obj["id"],
             round_idx=obj["round_idx"],
             state_dict=state_dict,

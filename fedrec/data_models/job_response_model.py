@@ -3,6 +3,8 @@ from typing import Dict
 from fedrec.data_models.messages import Message
 from dataclasses import dataclass
 
+from fedrec.serialization.serializer_registry import deserialize_attribute
+
 
 @dataclass
 class JobResponseMessage(Message):
@@ -52,6 +54,7 @@ class JobResponseMessage(Message):
 
     @classmethod
     def deserialize(cls, obj: Dict):
-        return JobResponseMessage(obj["job_type"],
-                                  obj["senderid"],
-                                  obj["receiverid"])
+        return cls(obj["job_type"],
+                   obj["senderid"],
+                   obj["receiverid"],
+                   deserialize_attribute(obj["results"]))

@@ -3,6 +3,7 @@ from typing import Dict, List
 from dataclasses import dataclass
 from fedrec.data_models.base_actor_state_model import ActorState
 from fedrec.data_models.messages import Message
+from fedrec.serialization.serializer_registry import deserialize_attribute
 
 
 @dataclass
@@ -65,11 +66,11 @@ class JobSubmitMessage(Message):
 
     @classmethod
     def deserialize(cls, obj):
-        job_args = cls.deserialize_attribute(obj["job_args"])
-        job_kwargs = cls.deserialize_attribute(obj["job_kwargs"])
-        worker_state = cls.deserialize_attribute(obj["workerstate"])
+        job_args = deserialize_attribute(obj["job_args"])
+        job_kwargs = deserialize_attribute(obj["job_kwargs"])
+        worker_state = deserialize_attribute(obj["workerstate"])
 
-        return JobSubmitMessage(
+        return cls(
             obj["job_type"],
             job_args,
             job_kwargs,

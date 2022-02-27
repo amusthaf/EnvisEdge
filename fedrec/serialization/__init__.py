@@ -1,3 +1,4 @@
-from . import abstract_serializer
-from . import json_serialization_strategy
+from . import serializable_interface
+from . import serialization_strategy
+from . import serializer_registry
 
