@@ -101,10 +101,10 @@ class Trainer(BaseActor, ABC):
         self.worker_index = state.id
         self.persistent_storage = state.storage
         self.round_idx = state.round_idx
-        self.model.load_state_dict(state.state_dict['model'].state)
+        self.load_model(state.state_dict['model'])
         self.local_training_steps = state.state_dict['step']
         if self.optimizer is not None:
-            self.optimizer.load_state_dict(state.state_dict['optimizer'].state)
+            self.load_optimizer(state.state_dict['optimizer'])
 
     def update_dataset(self, model_preproc):
         """Update the dataset, trainer_index and model_index .

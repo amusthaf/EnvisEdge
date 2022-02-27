@@ -41,8 +41,8 @@ class BaseActor(Reproducible, ABC):
         self.worker_index = worker_index
         self.is_mobile = is_mobile
         self.persistent_storage = (config["log_dir"]["PATH"]
-                                    +"worker_id_"
-                                    +str(self.worker_index))
+                                   + "worker_id_"
+                                   + str(self.worker_index))
         if not os.path.exists(self.persistent_storage):
             os.makedirs(self.persistent_storage)
         self.config = config
@@ -99,7 +99,7 @@ class BaseActor(Reproducible, ABC):
             A dict containing the model weights.
         """
         return StateTensors(
-            storage = self.persistent_storage,
+            storage=self.persistent_storage,
             worker_id=self.worker_index,
             tensors=self.model.cpu().state_dict(),
             round_idx=self.round_idx,
@@ -108,7 +108,7 @@ class BaseActor(Reproducible, ABC):
     def _get_optimizer_params(self):
         if self._optimizer is not None:
             return StateTensors(
-                storage = self.persistent_storage,
+                storage=self.persistent_storage,
                 worker_id=self.worker_index,
                 tensors=self.optimizer.state_dict(),
                 round_idx=self.round_idx,
@@ -116,15 +116,18 @@ class BaseActor(Reproducible, ABC):
         else:
             raise ValueError("No optimizer found")
 
-    def update_model(self, weights):
+    def load_model(self, state_dict: StateTensors):
         """Update the model weights with weights.
 
         Parameters
         ----------
-        weights : Dict
+        weights : StateTensors
             The model weights to be loaded into the optimizer
         """
-        self.model.load_state_dict(weights)
+        self.model.load_state_dict(state_dict.get_torch_obj())
+
+    def load_optimizer(self, state_dict: StateTensors):
+        self.optimizer.load_state_dict(state_dict.get_torch_obj())
 
     def run(func_name, *args, **kwargs):
         pass

@@ -92,6 +92,7 @@ class TestTrainer(AbstractTester):
             job_args=[],
             job_kwargs={}
         )
+        print(response)
         # check response message
         if response.status:
             worker_state = response.results

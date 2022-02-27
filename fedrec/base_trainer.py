@@ -62,7 +62,7 @@ class BaseTrainer(Reproducible):
 
         self._model = None
         self._data_loaders = {}
-
+        self._scheduler = None
         self._optimizer = None
         self._saver = None
 
@@ -266,7 +266,7 @@ class BaseTrainer(Reproducible):
         with self.data_random:
             best_acc_test = 0
             best_auc_test = 0
-            dummy_input = map_to_cuda(next(iter(train_dl))[0])
+            dummy_input = next(iter(train_dl))[0]
             self.logger.add_graph(self.model, dummy_input[0])
             t_loader = tqdm(train_dl, unit='batch',
                             total=total_train_len)

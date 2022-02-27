@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-
 from fedrec.serialization.serializable_interface import Serializable
 from fedrec.serialization.serializer_registry import deserialize_attribute
 from fedrec.utilities import registry

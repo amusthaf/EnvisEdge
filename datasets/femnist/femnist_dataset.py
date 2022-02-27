@@ -1,5 +1,6 @@
 import os
 import os.path
+from torchvision import transforms
 
 import torch
 from PIL import Image
@@ -28,11 +29,13 @@ class FemnistDataset(torch.utils.data.Dataset):
             data_dir,
             img_urls,
             targets,
-            transform=None,
-            target_transform=None):
+            normalize=((0.1307,), (0.3081,))
+    ):
 
-        self.transform = transform
-        self.target_transform = target_transform
+        self.transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(*normalize)
+        ])
         self.data_dir = data_dir
         self.img_urls = img_urls
         self.targets = targets
@@ -54,9 +57,6 @@ class FemnistDataset(torch.utils.data.Dataset):
         # apply transform over the image
         if self.transform is not None:
             img = self.transform(img)
-        # apply target_transform over image
-        if self.target_transform is not None:
-            target = self.target_transform(target)
         return img, target
 
     def __len__(self):

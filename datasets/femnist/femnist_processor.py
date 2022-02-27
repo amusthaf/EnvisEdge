@@ -9,17 +9,18 @@ from fedrec.utilities import registry
 
 @registry.load("dataset", "femnist")
 class FemnistProcessor:
-    REGISTERED_NAME = 'femnist'
 
     def __init__(
             self,
             data_dir,
-            splits):
+            splits,
+            normalize=((0.1307,), (0.3081,))):
         self.data_dir = data_dir
         self.meta_data_dir = os.path.join(data_dir, 'client_data_mapping')
         self.splits = splits
         self.img_urls = {split: None for split in splits}
         self.labels = {split: None for split in splits}
+        self.normalize = normalize
 
     def process_data(self):
         for split in self.splits:
@@ -68,11 +69,12 @@ class FemnistProcessor:
                    "label_name", "label_id"],
             skiprows=start_offset,
             nrows=num_samples,
-            delimiter=","
+            delimiter=",",
         )
+        df_values = df_values.drop(labels=0, axis=0)
         return (
-            df_values["sample_path"].to_list(),
-            df_values["label_id"].to_list()
+            df_values.sample_path.to_list(),
+            df_values.label_id.to_list()
         )
 
     def load(self, client_id=None):
@@ -90,4 +92,5 @@ class FemnistProcessor:
         return FemnistDataset(
             data_dir=self.data_dir,
             img_urls=self.img_urls[split],
-            targets=self.labels[split])
+            targets=self.labels[split],
+            normalize=((self.normalize[0],), (self.normalize[1],)))

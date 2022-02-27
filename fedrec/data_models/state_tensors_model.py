@@ -1,6 +1,9 @@
+from typing import Dict
+
 from fedrec.serialization.serializable_interface import Serializable
 from fedrec.utilities.io_utils import load_tensors, save_tensors
 from fedrec.utilities.registry import Registrable
+
 
 @Registrable.register_class_ref
 class StateTensors(Serializable):
@@ -76,10 +79,12 @@ class StateTensors(Serializable):
         # if file is provided, save the tensor
         # to the file and return the file path.
         path = save_tensors(self.torch_obj, self.get_path())
-        return path
+        return self.append_type({
+            "storage": path
+        })
 
     @classmethod
-    def deserialize(cls, path):
+    def deserialize(cls, obj: Dict):
         """
         Deserializes a tensor object.
 
@@ -93,7 +98,7 @@ class StateTensors(Serializable):
         deserialized_obj: object
             The deserialized object.
         """
-
+        path = obj['storage']
         tensors = load_tensors(path)
         worker_id, round_idx, tensor_type = cls.split_path(path)
         return StateTensors(

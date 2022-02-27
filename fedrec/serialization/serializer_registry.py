@@ -32,7 +32,6 @@ def serialize_attribute(obj):
 def deserialize_attribute(obj: Dict):
     # Initially take in dict from abstract comm manager 
     # from kafka consumer.
-    print(obj)
     # check for primitives
     if is_primitives(obj):
         return obj
