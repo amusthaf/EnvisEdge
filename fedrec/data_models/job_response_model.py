@@ -21,7 +21,6 @@ class JobResponseMessage(Message):
             dict of results obtained from job completion
         errors : null
     '''
-    __type__ = "JobResponseMessage"
 
     def __init__(self, job_type, senderid, receiverid):
         super().__init__(senderid, receiverid)
@@ -49,7 +48,7 @@ class JobResponseMessage(Message):
             self.results)
 
         # return self.serialization_strategy.unparse(response_dict)
-        return response_dict
+        return self.append_type(response_dict)
 
     def deserialize(self, obj: Dict):
         obj = self.serialization_strategy.parse(obj)

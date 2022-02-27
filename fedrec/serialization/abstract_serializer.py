@@ -56,8 +56,7 @@ class Serializable(ABC):
     def type_name(cls):
         return cls.__name__
 
-    @classmethod
-    def generate_message_dict(cls, obj):
+    def append_type(self, obj_dict):
         """Generates a dictionary from an object and
          appends type information for finding the appropriate serialiser.
 
@@ -72,8 +71,8 @@ class Serializable(ABC):
             The dictionary representation of the object.
         """
         return {
-            "__type__": obj.__type__,
-            "__data__": obj.__dict__,
+            "__type__": self.type_name(),
+            "__data__": obj_dict,
         }
 
     def get_class_serializer(self, obj):
@@ -87,8 +86,8 @@ class Serializable(ABC):
         elif is_primitives(obj):
             return obj
         else:
-            serializer = self.get_class_serializer(obj)
-            return serializer.serialize(obj)
+            assert isinstance(obj, Serializable), "Object must be serializable"
+            return obj.serialize()
 
     def deserialize_atttribute(self, obj):
         if isinstance(obj, Dict):

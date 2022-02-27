@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from json import dumps
 from fedrec.utilities import registry
-from fedrec.serialization.abstract_serializer import get_serializer
+from fedrec.serialization.abstract_serializer import Serializable, get_serializer
 import asyncio
 
 
@@ -26,7 +26,7 @@ class AbstractCommunicationManager(ABC):
     def finish(self):
         pass
 
-    def serialize(self, obj):
+    def serialize(self, obj: Serializable):
         """
         Serializes a message.
 
@@ -40,11 +40,7 @@ class AbstractCommunicationManager(ABC):
         message: str
             The serialized message.
         """
-        out = str(get_serializer(
-            obj,
-            self.srl_strategy
-        ).serialize(obj)).encode('utf-8')
-        return out
+        return str(obj.serialize()).encode('utf-8')
 
     def deserialize(self, message):
         """
