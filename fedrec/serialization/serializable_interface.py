@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-
+from fedrec.utilities.registry import Registrable
 
 PRIMITIVES_TYPES = (str, int, float, bool)
 
@@ -11,7 +11,7 @@ def is_primitives(obj):
         return isinstance(obj, PRIMITIVES_TYPES)
 
 
-class Serializable(ABC):
+class Serializable(Registrable, ABC):
     """Abstract class for serializers and deserializers.
 
     Attributes:

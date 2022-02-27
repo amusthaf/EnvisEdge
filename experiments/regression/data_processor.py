@@ -4,7 +4,6 @@ from fedrec.utilities import registry
 
 @registry.load('preproc', 'regression')
 class RegressionPreprocessor(PreProcessor):
-    REGISTERED_NAME = 'regression'
 
     def __init__(
             self,

@@ -21,7 +21,6 @@ import sys
 # a defaultdict provides default values for non-existent keys.
 LOOKUP_DICT = collections.defaultdict(dict)
 
-
 def load(kind, name):
     '''
     A decorator to record callable object definitions
@@ -49,16 +48,22 @@ def load(kind, name):
     ...     self.arg = arg
     '''
 
+    assert kind != "class_map", "reserved keyword for kind \"class_map\""
     registry = LOOKUP_DICT[kind]
+    class_ref = LOOKUP_DICT["class_map"]
 
     def decorator(obj):
         if name in registry:
             raise LookupError('{} already present'.format(name, kind))
-        registry[name] = obj
+        registry[name] = obj            
+        class_ref[obj.__name__] = obj
         return obj
-
     return decorator
 
+def lookup_class_ref(class_name):
+    if class_name not in LOOKUP_DICT["class_map"]:
+        raise KeyError('No class found for "{}"'.format(class_name))
+    return LOOKUP_DICT["class_map"][class_name]
 
 def lookup(kind, name):
     '''
@@ -204,3 +209,21 @@ def instantiate(callable, config, unused_keys=(), **kwargs):
         print('WARNING {}: superfluous {}'.format(
             callable, missing), file=sys.stderr)
     return callable(**merged)
+
+
+class Registrable(object):
+    def __init__(self) -> None:
+        print("******************************")
+        print("Registrable class")
+        # print(LOOKUP_DICT["class_map"])
+        print("******************************")
+        self._register_class_ref()
+
+    @classmethod
+    def type_name(cls):
+        return cls.__name__
+
+    @classmethod
+    def _register_class_ref(cls):
+        print(cls)
+        LOOKUP_DICT["class_map"][cls.type_name()] = cls

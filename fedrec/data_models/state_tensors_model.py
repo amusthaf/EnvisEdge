@@ -1,8 +1,6 @@
 from fedrec.serialization.serializable_interface import Serializable
-from fedrec.serialization.serializer_registry import register_deserializer
 from fedrec.utilities.io_utils import load_tensors, save_tensors
 
-@register_deserializer
 class StateTensors(Serializable):
     def __init__(
             self,

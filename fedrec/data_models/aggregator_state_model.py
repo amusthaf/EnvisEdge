@@ -1,7 +1,7 @@
 from typing import Dict, List
 import attr
 from fedrec.data_models.base_actor_state_model import ActorState
-from fedrec.serialization.serializer_registry import deserialize_attribute, register_deserializer, serialize_attribute
+from fedrec.serialization.serializer_registry import deserialize_attribute, serialize_attribute
 
 
 @attr.s
@@ -32,7 +32,6 @@ class Neighbour:
                 setattr(self, k, v)
 
 
-@register_deserializer
 class AggregatorState(ActorState):
     """Construct a AggregatorState object to reinstatiate a worker when needed.
 
