@@ -63,17 +63,17 @@ class AggregatorState(ActorState):
         self.in_neighbours = in_neighbours
         self.out_neighbours = out_neighbours
 
-    def serialize(self, obj):
+    def serialize(self):
         response_dict = {}
-        response_dict["id"] = obj.id
-        response_dict["round_idx"] = obj.round_idx
+        response_dict["id"] = self.id
+        response_dict["round_idx"] = self.round_idx
         response_dict["state_dict"] = self.serialize_attribute(
-            obj.state_dict)
-        response_dict["storage"] = obj.storage
+            self.state_dict)
+        response_dict["storage"] = self.storage
         response_dict["in_neighbours"] = self.serialize_attribute(
-            obj.in_neighbours)
+            self.in_neighbours)
         response_dict["out_neighbours"] = self.serialize_attribute(
-            obj.out_neighbours)
+            self.out_neighbours)
         return response_dict
         # return self.serialization_strategy.unparse(response_dict)
 

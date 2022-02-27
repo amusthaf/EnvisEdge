@@ -1,7 +1,6 @@
 import torch
-
+from fedrec.serialization.abstract_serializer import Serializable
 from fedrec.utilities import registry
-from fedrec.utilities.serialization_utils import Serializable
 
 
 class PreProcessor(Serializable):
@@ -41,3 +40,20 @@ class PreProcessor(Serializable):
         return torch.utils.data.DataLoader(
             data, **kwargs
         )
+
+    def serialize(self):
+        output = {
+            "proc_config": {"name": self.REGISTERED_NAME},
+            "client_id": self.client_id,
+            "dataset_config": self.dataset_config
+        }
+        # return self.serialization_strategy.unparse(output)
+        return output
+
+    def deserialize(self, obj):
+        obj = self.serialization_strategy.parse(obj)
+
+        self.model_preproc: PreProcessor = registry.construct(
+            "preproc", obj["proc_config"],
+            dataset_config=obj["dataset_config"],
+            client_id=obj["client_id"])

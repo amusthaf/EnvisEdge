@@ -28,8 +28,7 @@ class StateTensors(Serializable):
     def get_torch_obj(self):
         return self.torch_obj
 
-    @classmethod
-    def serialize(cls, tensor, path=None):
+    def serialize(self):
         """
         Serializes a tensor object.
 
@@ -46,16 +45,10 @@ class StateTensors(Serializable):
             The serialized object.
 
         """
-        if path:
-            # if file is provided, save the tensor
-            # to the file and return the file path.
-            save_tensors(tensor, path)
-            return path
-        else:
-            # create a buffer Bytes object,
-            # which can be used to write to the file.
-            save_tensors(tensor)
-            return path
+        # if file is provided, save the tensor
+        # to the file and return the file path.
+        save_tensors(self.torch_obj, self.storage)
+        return self.storage
 
     @classmethod
     def deserialize(cls, path):

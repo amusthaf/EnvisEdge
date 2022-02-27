@@ -47,17 +47,17 @@ class JobSubmitMessage(Message):
         '''Returns job_type from JobSubmitMessage Object'''
         return self.job_type
 
-    def serialize(self, obj):
+    def serialize(self):
         response_dict = {}
-        response_dict["job_type"] = obj.job_type
+        response_dict["job_type"] = self.job_type
         response_dict["job_args"] = [self.serialize_attribute(arg)
-                                     for arg in obj.job_args]
+                                     for arg in self.job_args]
         response_dict["job_kwargs"] = {kwarg_name:
                                        self.serialize_attribute(kwarg)
                                        for kwarg_name, kwarg
-                                       in obj.job_kwargs.items()}
+                                       in self.job_kwargs.items()}
         response_dict["worker_state"] = self.serialize_attribute(
-            obj.workerstate)
+            self.workerstate)
 
         # self.serialization_strategy.unparse(response_dict)
         return response_dict

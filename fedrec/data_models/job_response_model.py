@@ -40,13 +40,13 @@ class JobResponseMessage(Message):
         else:
             return False
 
-    def serialize(self, obj):
+    def serialize(self):
         response_dict = {}
-        response_dict["job_type"] = obj.job_type
-        response_dict["senderid"] = obj.senderid
-        response_dict["receiverid"] = obj.receiverid
+        response_dict["job_type"] = self.job_type
+        response_dict["senderid"] = self.senderid
+        response_dict["receiverid"] = self.receiverid
         response_dict["results"] = self.serialize_attribute(
-            obj.results)
+            self.results)
 
         # return self.serialization_strategy.unparse(response_dict)
         return response_dict
