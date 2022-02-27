@@ -50,9 +50,8 @@ class JobResponseMessage(Message):
         # return self.serialization_strategy.unparse(response_dict)
         return self.append_type(response_dict)
 
-    def deserialize(self, obj: Dict):
-        obj = self.serialization_strategy.parse(obj)
-
+    @classmethod
+    def deserialize(cls, obj: Dict):
         return JobResponseMessage(obj["job_type"],
                                   obj["senderid"],
                                   obj["receiverid"])

@@ -77,13 +77,13 @@ class AggregatorState(ActorState):
         return self.append_type(response_dict)
         # return self.serialization_strategy.unparse(response_dict)
 
-    def deserialize(self, obj: Dict):
-
-        state_dict = self.deserialize_attribute(
+    @classmethod
+    def deserialize(cls, obj: Dict):
+        state_dict = cls.deserialize_attribute(
             obj['state_dict'])
-        in_neighbours = self.deserialize_attribute(
+        in_neighbours = cls.deserialize_attribute(
             obj['in_neighbours'])
-        out_neighbours = self.deserialize_attribute(
+        out_neighbours = cls.deserialize_attribute(
             obj['out_neighbours'])
 
         return AggregatorState(
@@ -92,4 +92,5 @@ class AggregatorState(ActorState):
             state_dict=state_dict,
             storage=obj['storage'],
             in_neighbours=in_neighbours,
-            out_neighbours=out_neighbours)
+            out_neighbours=out_neighbours
+        )

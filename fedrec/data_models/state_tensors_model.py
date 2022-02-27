@@ -1,4 +1,4 @@
-from fedrec.serialization.abstract_serializer import Serializable
+from fedrec.serialization.serializable_interface import Serializable
 from fedrec.utilities.io_uitls import load_tensors, save_tensors
 
 
@@ -27,6 +27,33 @@ class StateTensors(Serializable):
 
     def get_torch_obj(self):
         return self.torch_obj
+
+    @staticmethod
+    def split_path(path):
+        """
+        Splits the path into the worker id, round idx, and tensor type.
+
+        Parameters:
+        -----------
+        path: str
+            The path to the tensor.
+
+        Returns:
+        --------
+        worker_id: int
+            The worker id.
+        round_idx: int
+            The round idx.
+        tensor_type: str
+            The tensor type.
+
+        """
+        path_split = path.split("/")
+        info = path_split[-1].split("_")
+        worker_id = int(info[0])
+        round_idx = int(info[1])
+        tensor_type = info[2]
+        return worker_id, round_idx, tensor_type
 
     def serialize(self):
         """
@@ -66,5 +93,8 @@ class StateTensors(Serializable):
             The deserialized object.
         """
 
-        tensor = load_tensors(path)
-        return tensor
+        tensors = load_tensors(path)
+        worker_id, round_idx, tensor_type = cls.split_path(path)
+        return StateTensors(
+            path, worker_id, round_idx, tensors, tensor_type
+        )

@@ -56,9 +56,7 @@ class AbstractCommunicationManager(ABC):
         message: object
             The deserialized message.
         """
-        print("entering deserialize")
         message = message.decode('utf-8')
         return get_serializer(
             message,
-            self.srl_strategy
         ).deserialize(message)

@@ -1,35 +1,34 @@
 from collections import defaultdict
+from typing import Dict
 
 from defusedxml import NotSupportedError
- 
+
+from fedrec.serialization.serializable_interface import Serializable
+
 
 SERIALIZER_MAP = defaultdict(dict)
 ACTIVE_SERIALIZERS = defaultdict(dict)
 
-def serializer_of(serialized_class):
-    assert issubclass(serialized_class, Serializable), (
-        NotSupportedError(serialized_class))
 
-    cls_type_name = serialized_class.type_name()
+def register_deserializer(class_ref):
+    assert issubclass(class_ref, Serializable), (
+        NotSupportedError(class_ref))
 
-    def decorator(serializer_name):
-        if cls_type_name in SERIALIZER_MAP:
-            raise LookupError('{} already present'.format(cls_type_name))
-        SERIALIZER_MAP[cls_type_name] = serializer_name
-        return serialized_class
-    return decorator
+    cls_type_name = class_ref.type_name()
+    if cls_type_name in SERIALIZER_MAP:
+        raise LookupError('{} already present'.format(cls_type_name))
+    SERIALIZER_MAP[cls_type_name] = class_ref
+    return class_ref
 
-def get_serializer(serialized_obj, srl_strategy):
-    cls = None
-    if isinstance(serialized_obj, Serializable):
-        cls = serialized_obj.type_name()
-    else:
+
+def get_deserializer(serialized_obj: Dict):
+    if "__type__" not in serialized_obj:
         raise NotSupportedError(serialized_obj)
-    if cls in SERIALIZER_MAP:
-        if cls not in ACTIVE_SERIALIZERS:
-            ACTIVE_SERIALIZERS[cls] = SERIALIZER_MAP[cls](srl_strategy)
-        ACTIVE_SERIALIZERS[cls].serialization_strategy = srl_strategy
+    type_name = serialized_obj["__type__"]
+    if type_name in SERIALIZER_MAP:
+        if type_name not in ACTIVE_SERIALIZERS:
+            ACTIVE_SERIALIZERS[type_name] = SERIALIZER_MAP[type_name]
     else:
-        raise LookupError('{} class not present'.format(cls))
+        raise LookupError('{} class not present'.format(type_name))
 
-    return ACTIVE_SERIALIZERS[cls]
+    return ACTIVE_SERIALIZERS[type_name]

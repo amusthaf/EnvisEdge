@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple
 
-from fedrec.utilities.serialization_utils import get_serializer
+from fedrec.utilities.serialization_utils import get_deserializer
 
 PRIMITIVES_TYPES = (str, int, float, bool)
 
@@ -75,9 +75,6 @@ class Serializable(ABC):
             "__data__": obj_dict,
         }
 
-    def get_class_serializer(self, obj):
-        return get_serializer(obj, self.serialization_strategy)
-
     def serialize_attribute(self, obj):
         if isinstance(obj, Dict):
             return {k: self.serialize_attribute(v) for k, v in obj.items()}
@@ -89,11 +86,15 @@ class Serializable(ABC):
             assert isinstance(obj, Serializable), "Object must be serializable"
             return obj.serialize()
 
-    def deserialize_atttribute(self, obj):
-        if isinstance(obj, Dict):
-            return {k: self.deserialize_attribute(v) for k, v in obj.items()}
+    @classmethod
+    def deserialize_attribute(cls, obj):
+        if "__type__" in obj:
+            type_name = obj["__type__"]
+            data = obj["__data__"]
+            return get_deserializer(type_name).deserialize(data)
+        elif isinstance(obj, Dict):
+            return {k: cls.deserialize_attribute(v) for k, v in obj.items()}
         elif isinstance(obj, (List, Tuple)):
-            return [self.deserialize_attribute(v) for v in obj]
+            return [cls.deserialize_attribute(v) for v in obj]
         else:
-            deserializer = self.get_class_serializer(obj)
-            return deserializer.deserialize(obj)
+            raise ValueError("Object is not serializable")

@@ -48,27 +48,32 @@ class JobSubmitMessage(Message):
         return self.job_type
 
     def serialize(self):
-        response_dict = {}
-        response_dict["job_type"] = self.job_type
-        response_dict["job_args"] = self.serialize_attribute(
-            self.job_args)
-        response_dict["job_kwargs"] = self.serialize_attribute(
-            self.job_kwargs)
-        response_dict["worker_state"] = self.serialize_attribute(
-            self.workerstate)
+        response_dict = {
+            "job_type": self.job_type,
+            "job_args": self.serialize_attribute(
+                self.job_args),
+            "job_kwargs": self.serialize_attribute(
+                self.job_kwargs),
+            "senderid": self.senderid,
+            "receiverid": self.receiverid,
+            "workerstate": self.serialize_attribute(
+                self.workerstate)
+        }
 
         # self.serialization_strategy.unparse(response_dict)
         return response_dict
 
-    def deserialize(self, obj):
-        obj = self.serialization_strategy.parse(obj)
-
-        job_args = self.deserialize_attribute(obj["job_args"])
-        job_kwargs = self.deserialize_attribute(obj["job_kwargs"])
-        worker_state = self.deserialize_attribute(obj["workerstate"])
+    @classmethod
+    def deserialize(cls, obj):
+        job_args = cls.deserialize_attribute(obj["job_args"])
+        job_kwargs = cls.deserialize_attribute(obj["job_kwargs"])
+        worker_state = cls.deserialize_attribute(obj["workerstate"])
 
         return JobSubmitMessage(
             obj["job_type"],
             job_args,
             job_kwargs,
-            worker_state)
+            obj["senderid"],
+            obj["receiverid"],
+            worker_state
+        )
