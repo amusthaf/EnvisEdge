@@ -1,6 +1,8 @@
 from abc import abstractproperty
 from argparse import ArgumentParser
+from copy import deepcopy
 from typing import Dict
+import time
 
 import fedrec
 import experiments
@@ -24,7 +26,7 @@ class AbstractTester():
         com_manager_config = config["multiprocessing"]["communication_interface"]
        # append worker infromation to dictionary
 
-        temp = com_manager_config["producer_topic"]
+        temp = deepcopy(com_manager_config["producer_topic"])
         com_manager_config["producer_topic"] = com_manager_config[
             "consumer_topic"] + "-" + type
 
@@ -45,7 +47,7 @@ class AbstractTester():
 
     @abstractproperty
     def worker(self) -> BaseActor:
-        print("Not implimented")
+        print("Not implemented")
 
     def submit_message(self,
                        senderid,
@@ -63,7 +65,6 @@ class AbstractTester():
         # send the meesgae over to kafka using producer
         self.send_message(message)
         # receive message from consumer
-        print("sent message")
         return self.receive_message()
 
 

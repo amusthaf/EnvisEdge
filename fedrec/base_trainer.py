@@ -6,7 +6,6 @@ import torch
 from fedrec.preprocessor import PreProcessor
 from fedrec.utilities import registry
 from fedrec.utilities import saver_utils as saver_mod
-from fedrec.utilities.cuda_utils import map_to_cuda
 from sklearn import metrics
 from tqdm import tqdm
 from fedrec.utilities.logger import BaseLogger
@@ -331,3 +330,4 @@ class BaseTrainer(Reproducible):
                 # Run saver
                 if last_step % self.train_config.save_every_n == 0:
                     self.saver.save(modeldir, last_step, current_epoch)
+        return self.model.state_dict()

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from fedrec.serialization.serializable_interface import Serializable
-from fedrec.serialization.serializer_registry import deserialize_attribute
+from fedrec.serialization.serializer_registry import deserialize_attribute, serialize_attribute
 from fedrec.utilities import registry
 import asyncio
 import ast
@@ -26,7 +26,7 @@ class AbstractCommunicationManager(ABC):
     def finish(self):
         pass
 
-    def serialize(self, obj: Serializable):
+    def serialize(self, obj):
         """
         Serializes a message.
 
@@ -40,7 +40,8 @@ class AbstractCommunicationManager(ABC):
         message: str
             The serialized message.
         """
-        return str(obj.serialize()).encode('utf-8')
+        out = str(serialize_attribute(obj)).encode('utf-8')
+        return out
 
     def deserialize(self, message):
         """

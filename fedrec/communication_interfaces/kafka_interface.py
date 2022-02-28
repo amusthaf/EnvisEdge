@@ -98,8 +98,9 @@ class Kafka(AbstractCommunicationManager):
         """
         if not self.producer:
             raise Exception("No producer defined")
-        self.producer.send(self.producer_topic, value=message)
-
+        self.producer.send(self.producer_topic, value=message).get()
+        self.producer.flush()
+        
     def finish(self):
         """
         Closes the consumer and producer.

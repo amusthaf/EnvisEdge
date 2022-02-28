@@ -51,7 +51,7 @@ class Trainer(BaseActor, ABC):
             config_dict=config,
             client_id=self.client_id,
             logger=logger)
-            
+
         self.worker_funcs = {
             func_name: getattr(self.worker, func_name)
             for func_name in dir(self.worker)
@@ -129,7 +129,8 @@ class Trainer(BaseActor, ABC):
         """
         if func_name in self.worker_funcs:
             print(f"Running function name: {func_name}")
-            return self.worker_funcs[func_name](*args, **kwargs)
+            return self.process_args(
+                self.worker_funcs[func_name](*args, **kwargs))
         else:
             raise ValueError(
                 f"Job type <{func_name}> not part of worker"

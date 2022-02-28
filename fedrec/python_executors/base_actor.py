@@ -1,9 +1,8 @@
 from abc import ABC, abstractclassmethod, abstractmethod
-from distutils.log import error
-from typing import Dict
+from typing import Dict, List, Tuple
 import os
-import attr
 import torch
+from random import randint
 from fedrec.preprocessor import PreProcessor
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
@@ -98,21 +97,11 @@ class BaseActor(Reproducible, ABC):
         Dict:
             A dict containing the model weights.
         """
-        return StateTensors(
-            storage=self.persistent_storage,
-            worker_id=self.worker_index,
-            tensors=self.model.cpu().state_dict(),
-            round_idx=self.round_idx,
-            tensor_type=self.name)
+        return self.wrap_tensors(self.model.state_dict())
 
     def _get_optimizer_params(self):
         if self._optimizer is not None:
-            return StateTensors(
-                storage=self.persistent_storage,
-                worker_id=self.worker_index,
-                tensors=self.optimizer.state_dict(),
-                round_idx=self.round_idx,
-                tensor_type=self.name)
+            return self.wrap_tensors(self.optimizer.state_dict())
         else:
             raise ValueError("No optimizer found")
 
@@ -128,6 +117,36 @@ class BaseActor(Reproducible, ABC):
 
     def load_optimizer(self, state_dict: StateTensors):
         self.optimizer.load_state_dict(state_dict.get_torch_obj())
+
+    def wrap_tensors(self, tensors, suffix=""):
+        return StateTensors(
+            storage=self.persistent_storage,
+            worker_id=self.worker_index,
+            tensors=tensors,
+            round_idx=self.round_idx,
+            tensor_type=self.name,
+            suffix=suffix
+        )
+
+    def process_args(self, argument):
+        # TODO implement other secondary processing if needed
+        # TODO : Fix randint
+        if isinstance(argument, (Tuple, List)):
+            return [
+                self.process_args(arg)
+                for arg in argument
+            ]
+        elif isinstance(argument, torch.Tensor):
+            return self.wrap_tensors(argument, randint(0, 100))
+        elif isinstance(argument, Dict):
+            if all(isinstance(value, torch.Tensor) for value in argument.items()):
+                return self.wrap_tensors(argument, randint(0, 100))
+            return {
+                key: self.process_args(value)
+                for key, value in argument.items()
+            }
+        else:
+            return argument
 
     def run(func_name, *args, **kwargs):
         pass
