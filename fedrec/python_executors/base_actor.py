@@ -105,7 +105,7 @@ class BaseActor(Reproducible, ABC):
         else:
             raise ValueError("No optimizer found")
 
-    def load_model(self, state_dict: StateTensors):
+    def load_model(self, state_dict):
         """Update the model weights with weights.
 
         Parameters
@@ -113,7 +113,15 @@ class BaseActor(Reproducible, ABC):
         weights : StateTensors
             The model weights to be loaded into the optimizer
         """
-        self.model.load_state_dict(state_dict.get_torch_obj())
+        if isinstance(state_dict, dict):
+            assert all(isinstance(value, StateTensors)
+                       for value in state_dict.values())
+            self.model.load_state_dict({
+                k: v.get_torch_obj() for k, v in state_dict.items()})
+        elif isinstance(state_dict, StateTensors):
+            self.model.load_state_dict(state_dict.get_torch_obj())
+        else:
+            ValueError("Invalid state_dict type")
 
     def load_optimizer(self, state_dict: StateTensors):
         self.optimizer.load_state_dict(state_dict.get_torch_obj())
