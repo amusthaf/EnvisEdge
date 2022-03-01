@@ -14,7 +14,7 @@ class TrainerState(ActorState):
 
     Attributes
     ----------
-    id : int
+    wokrer_index : int
         Unique worker identifier
     model_preproc : `Preprocessor`
         The local dataset of the worker
@@ -32,7 +32,7 @@ class TrainerState(ActorState):
     def serialize(self):
         # creates a dictiony of attributes to serialize
         response_dict = {}
-        response_dict["id"] = self.id
+        response_dict["worker_index"] = self.worker_index
         response_dict["round_idx"] = self.round_idx
         response_dict["state_dict"] = serialize_attribute(
             self.state_dict)
@@ -54,7 +54,7 @@ class TrainerState(ActorState):
             obj['model_preproc'])
 
         return cls(
-            id=obj["id"],
+            worker_index=obj["worker_index"],
             round_idx=obj["round_idx"],
             state_dict=state_dict,
             storage=obj["storage"],

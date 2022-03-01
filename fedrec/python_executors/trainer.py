@@ -79,7 +79,7 @@ class Trainer(BaseActor, ABC):
             state['optimizer'] = self._get_optimizer_params()
 
         return TrainerState(
-            id=self.worker_index,
+            worker_index=self.worker_index,
             round_idx=self.round_idx,
             state_dict=state,
             model_preproc=self.model_preproc,
@@ -98,7 +98,7 @@ class Trainer(BaseActor, ABC):
         state : TrainerState
             TrainerState containing the weights
         """
-        self.worker_index = state.id
+        self.worker_index = state.worker_index
         self.persistent_storage = state.storage
         self.round_idx = state.round_idx
         self.load_model(state.state_dict['model'])

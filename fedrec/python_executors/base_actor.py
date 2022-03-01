@@ -87,6 +87,7 @@ class BaseActor(Reproducible, ABC):
             )
             if torch.cuda.is_available():
                 self._model.cuda()
+        # model being used by trainer 
         return self._model
 
     def _get_model_params(self):

@@ -1,6 +1,9 @@
 from typing import Dict, List
 
+import attr
+
 from fedrec.data_models.base_actor_state_model import ActorState
+from fedrec.data_models.state_tensors_model import StateTensors
 from fedrec.serialization.serializable_interface import Serializable
 from fedrec.serialization.serializer_registry import (deserialize_attribute,
                                                       serialize_attribute)
@@ -22,18 +25,22 @@ class Neighbour(Serializable):
     last_sync : int
         Last cycle when the models were synced
     """
-
+    
     def __init__(
         self,
-        id,
-        model,
+        worker_index: int,
+        model_state: StateTensors,
         sample_num,
         last_sync=0
     ) -> None:
-        self.id = id
-        self.model = model
+        self.worker_index = worker_index
+        self.model_state = model_state
         self.sample_num = sample_num
         self.last_sync = last_sync
+
+    @property
+    def model(self):
+        return self.model_state.get_torch_obj()
 
     def update(self, kwargs):
         for k, v in kwargs:
@@ -44,28 +51,28 @@ class Neighbour(Serializable):
 
     def serialize(self):
         response_dict = {}
-        response_dict["id"] = self.id
+        response_dict["worker_index"] = self.worker_index
         response_dict["last_sync"] = self.last_sync
-        response_dict["model"] = serialize_attribute(self.model)
+        response_dict["model_state"] = serialize_attribute(self.model_state)
         response_dict["sample_num"] = self.sample_num
         return self.append_type(response_dict)
 
     @classmethod
     def deserialize(cls, obj: Dict):
-        id = obj["id"]
+        worker_index = obj["worker_index"]
         last_sync = obj["last_sync"]
-        model = deserialize_attribute(obj["model"])
+        model_state = deserialize_attribute(obj["model_state"])
         sample_num = obj["sample_num"]
 
         return cls(
-            id=id,
+            worker_index=worker_index,
             last_sync=last_sync,
-            model=model,
+            model_state=model_state,
             sample_num=sample_num,
         )
 
-
-@ Registrable.register_class_ref
+@Registrable.register_class_ref
+@attr.s(kw_only=True)
 class AggregatorState(ActorState):
     """Construct a AggregatorState object to reinstatiate a worker when needed.
 
@@ -85,27 +92,12 @@ class AggregatorState(ActorState):
         worker when last synced
     """
 
-    def __init__(
-        self,
-        worker_index: int,
-        config: Dict,
-        logger: BaseLogger,
-        state_dict: Dict,
-        storage: str,
-        in_neighbours: List[Neighbour],
-        out_neighbours: List[Neighbour],
-        round_idx: int = 0,
-        is_mobile: bool = True,
-    ) -> None:
-        super().__init__(worker_index, config, logger,
-                         is_mobile, round_idx, storage=storage)
-        self.in_neighbours = in_neighbours
-        self.out_neighbours = out_neighbours
-        self.state_dict = state_dict
+    in_neighbours=attr.ib()
+    out_neighbours=attr.ib(factory=dict)
 
     def serialize(self):
         response_dict = {}
-        response_dict["id"] = self.id
+        response_dict["worker_index"] = self.worker_index
         response_dict["round_idx"] = self.round_idx
         response_dict["state_dict"] = serialize_attribute(
             self.state_dict)
@@ -127,7 +119,7 @@ class AggregatorState(ActorState):
             obj['out_neighbours'])
 
         return cls(
-            id=obj['id'],
+            worker_index=obj['worker_index'],
             round_idx=obj['round_idx'],
             state_dict=state_dict,
             storage=obj['storage'],

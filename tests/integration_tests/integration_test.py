@@ -22,8 +22,8 @@ class AbstractTester():
     def __init__(self,
                  config: Dict,
                  type: str) -> None:
-        self.config = config
-        com_manager_config = config["multiprocessing"]["communication_interface"]
+        self.config = deepcopy(config)
+        com_manager_config = self.config["multiprocessing"]["communication_interface"]
        # append worker infromation to dictionary
 
         temp = deepcopy(com_manager_config["producer_topic"])
@@ -32,12 +32,11 @@ class AbstractTester():
 
         com_manager_config["consumer_topic"] = temp + "-" + type
 
-        print(com_manager_config)
         self.comm_manager = registry.construct(
             "communication_interface",
             config=com_manager_config)
-
         self.logger = NoOpLogger()
+        print(com_manager_config)
 
     def send_message(self, message):
         return self.comm_manager.send_message(message)
@@ -180,7 +179,7 @@ if __name__ == "__main__":
     test_aggregator = TestAggregator(
         config=config,
         in_neighbours={
-            0: Neighbour(0, test_trainer.worker.model.state_dict(), 5)}
+            0: Neighbour(0, test_trainer.worker._get_model_params(), 5)}
     )
     test_aggregator.test_aggregation()
     test_aggregator.test_sample_client()
