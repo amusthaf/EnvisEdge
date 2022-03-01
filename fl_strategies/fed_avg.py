@@ -23,7 +23,7 @@ class FedAvg:
         training_num = 0
  
         for idx, neighbour in enumerate(self.in_neighbours.values()):
-            model_list[idx] = neighbour.model
+            model_list[idx] = (neighbour.sample_num, neighbour.model)
             training_num += neighbour.sample_num
  
         (sample_num0, averaged_params) = model_list[0]

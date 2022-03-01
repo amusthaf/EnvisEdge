@@ -1,12 +1,14 @@
 from typing import Dict, List
-import attr
+
 from fedrec.data_models.base_actor_state_model import ActorState
-from fedrec.serialization.serializer_registry import deserialize_attribute, serialize_attribute
+from fedrec.serialization.serializable_interface import Serializable
+from fedrec.serialization.serializer_registry import (deserialize_attribute,
+                                                      serialize_attribute)
+from fedrec.utilities.logger import BaseLogger
 from fedrec.utilities.registry import Registrable
 
 
-@attr.s
-class Neighbour:
+class Neighbour(Serializable):
     """A class that represents a new Neighbour instance.
 
     Attributes
@@ -20,10 +22,18 @@ class Neighbour:
     last_sync : int
         Last cycle when the models were synced
     """
-    id = attr.ib()
-    model = attr.ib(None)
-    sample_num = attr.ib(None)
-    last_sync = attr.ib(-1)
+
+    def __init__(
+        self,
+        id,
+        model,
+        sample_num,
+        last_sync=0
+    ) -> None:
+        self.id = id
+        self.model = model
+        self.sample_num = sample_num
+        self.last_sync = last_sync
 
     def update(self, kwargs):
         for k, v in kwargs:
@@ -32,8 +42,30 @@ class Neighbour:
             if hasattr(self, k):
                 setattr(self, k, v)
 
+    def serialize(self):
+        response_dict = {}
+        response_dict["id"] = self.id
+        response_dict["last_sync"] = self.last_sync
+        response_dict["model"] = serialize_attribute(self.model)
+        response_dict["sample_num"] = self.sample_num
+        return self.append_type(response_dict)
 
-@Registrable.register_class_ref
+    @classmethod
+    def deserialize(cls, obj: Dict):
+        id = obj["id"]
+        last_sync = obj["last_sync"]
+        model = deserialize_attribute(obj["model"])
+        sample_num = obj["sample_num"]
+
+        return cls(
+            id=id,
+            last_sync=last_sync,
+            model=model,
+            sample_num=sample_num,
+        )
+
+
+@ Registrable.register_class_ref
 class AggregatorState(ActorState):
     """Construct a AggregatorState object to reinstatiate a worker when needed.
 
@@ -55,16 +87,21 @@ class AggregatorState(ActorState):
 
     def __init__(
         self,
-        id: int,
-        round_idx: int,
+        worker_index: int,
+        config: Dict,
+        logger: BaseLogger,
         state_dict: Dict,
         storage: str,
         in_neighbours: List[Neighbour],
-        out_neighbours: List[Neighbour]
+        out_neighbours: List[Neighbour],
+        round_idx: int = 0,
+        is_mobile: bool = True,
     ) -> None:
-        super().__init__(id, round_idx, state_dict, storage)
+        super().__init__(worker_index, config, logger,
+                         is_mobile, round_idx, storage=storage)
         self.in_neighbours = in_neighbours
         self.out_neighbours = out_neighbours
+        self.state_dict = state_dict
 
     def serialize(self):
         response_dict = {}

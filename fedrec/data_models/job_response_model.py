@@ -25,11 +25,11 @@ class JobResponseMessage(Message):
         errors : null
     '''
 
-    def __init__(self, job_type, senderid, receiverid):
+    def __init__(self, job_type, senderid, receiverid, results={}, errors=None):
         super().__init__(senderid, receiverid)
         self.job_type: str = job_type
-        self.results = {}
-        self.errors = None
+        self.results = results
+        self.errors = errors
 
     @property
     def status(self):

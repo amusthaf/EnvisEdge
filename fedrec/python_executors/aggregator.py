@@ -70,7 +70,7 @@ class Aggregator(BaseActor, ABC):
             state['optimizer'] = self._get_optimizer_params()
 
         return AggregatorState(
-            id=self.worker_index,
+            worker_index=self.worker_index,
             round_idx=self.round_idx,
             state_dict=state,
             storage=self.persistent_storage,
@@ -88,7 +88,7 @@ class Aggregator(BaseActor, ABC):
         state : AggregatorState
             AggregatorState containing the weights
         """
-        self.worker_index = state.id
+        self.worker_index = state.worker_index
         self.persistent_storage = state.storage
         self.in_neighbours = state.in_neighbours
         self.out_neighbours = state.out_neighbours

@@ -1,13 +1,13 @@
+import time
 from abc import abstractproperty
 from argparse import ArgumentParser
 from copy import deepcopy
 from typing import Dict
-import time
 
-import fedrec
-import experiments
-import fl_strategies
 import datasets
+import experiments
+import fedrec
+import fl_strategies
 import yaml
 from fedrec.data_models.job_response_model import JobResponseMessage
 from fedrec.data_models.job_submit_model import JobSubmitMessage
@@ -93,12 +93,11 @@ class TestTrainer(AbstractTester):
             job_args=[],
             job_kwargs={}
         )
-        print(response)
         # check response message
         if response.status:
-            worker_state = response.results
-            self.worker.load_worker(worker_state)
-            print(f"Worker state {response.get_worker_state()}")
+            model_dict = response.results
+            self.worker.load_model(model_dict)
+            # print(f"Worker state {response.results}")
 
     def test_testing_method(self):
         response: JobResponseMessage = self.submit_message(
@@ -109,9 +108,8 @@ class TestTrainer(AbstractTester):
             job_kwargs={}
         )
         if response.status:
-            worker_state = response.results
-            self.worker.load_worker(worker_state)
-            print(f"Worker State {response.get_worker_state()}")
+            model_dict = response.results
+            print(f"Worker state {response.results}")
 
 
 class TestAggregator(AbstractTester):
@@ -120,8 +118,8 @@ class TestAggregator(AbstractTester):
 
     def __init__(self,
                  config: Dict,
-                 in_neighbours: Dict[int, Neighbour] = None,
-                 out_neighbours: Dict[int, Neighbour] = None):
+                 in_neighbours: Dict[int, Neighbour],
+                 out_neighbours: Dict[int, Neighbour] = {}):
         super().__init__(config, "aggregator")
         self.in_neighbours = in_neighbours
         self.out_neighbours = out_neighbours
@@ -146,10 +144,9 @@ class TestAggregator(AbstractTester):
         if response.status:
             worker_state = response.results
             self.worker.load_worker(worker_state)
-            print(f"Worker State {response.get_worker_state()}")
+            # print(f"Worker State {response.results}")
 
     def test_sample_client(self,
-                           round_idx,
                            client_num_per_round):
         response: JobResponseMessage = self.submit_message(
             senderid=self.worker.worker_index,
@@ -173,12 +170,17 @@ if __name__ == "__main__":
     with open(args.config, "r") as stream:
         config = yaml.safe_load(stream)
 
-    print(config)
+    print("training...")
     # start trainer
     test_trainer = TestTrainer(config=config)
     test_trainer.test_training_method()
     test_trainer.test_testing_method()
     # start aggregator
-    test_aggregator = TestAggregator(config=config)
+    print("aggregating...")
+    test_aggregator = TestAggregator(
+        config=config,
+        in_neighbours={
+            0: Neighbour(0, test_trainer.worker.model.state_dict(), 5)}
+    )
     test_aggregator.test_aggregation()
     test_aggregator.test_sample_client()

@@ -71,7 +71,8 @@ class Kafka(AbstractCommunicationManager):
                 bootstrap_servers=[self.consumer_url],
                 value_deserializer=self.deserialize,
                 auto_offset_reset='latest',
-                enable_auto_commit=False,
+                enable_auto_commit=True,
+                auto_commit_interval_ms=100,
                 group_id=consumer_group_id)
 
     def receive_message(self):
