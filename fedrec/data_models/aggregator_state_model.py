@@ -10,7 +10,7 @@ from fedrec.serialization.serializer_registry import (deserialize_attribute,
 from fedrec.utilities.logger import BaseLogger
 from fedrec.utilities.registry import Registrable
 
-
+@Registrable.register_class_ref
 class Neighbour(Serializable):
     """A class that represents a new Neighbour instance.
 

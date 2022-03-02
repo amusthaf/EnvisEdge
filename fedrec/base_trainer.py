@@ -331,3 +331,14 @@ class BaseTrainer(Reproducible):
                 if last_step % self.train_config.save_every_n == 0:
                     self.saver.save(modeldir, last_step, current_epoch)
         return self.model.state_dict()
+
+    def update(self, state: Dict):
+        # Update the model
+        self.model.load_state_dict(state["model"])
+        # Update the optimizer
+        self.optimizer.load_state_dict(state["optimizer"])
+        # empty dataloaders for new dataset
+        self.reset_loaders()
+        # update dataset
+        self.model_preproc=state["model_preproc"]
+

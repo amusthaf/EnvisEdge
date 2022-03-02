@@ -57,7 +57,7 @@ def main():
     else:
         logger = NoOpLogger()
 
-    JobExecutor(Trainer, config_dict, logger, client_id=0).run()
+    # JobExecutor(Trainer, config_dict, logger, client_id=0).run()
     JobExecutor(Aggregator, config_dict, logger).run()
     # process_manager: ProcessManager = registry.construct(
     #     "process_manager", config_dict["multiprocessing"]["process_manager"])

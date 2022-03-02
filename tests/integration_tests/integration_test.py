@@ -3,10 +3,11 @@ from abc import abstractproperty
 from argparse import ArgumentParser
 from copy import deepcopy
 from typing import Dict
-
+import torch
 import datasets
 import experiments
 import fedrec
+from fedrec.data_models.state_tensors_model import StateTensors
 import fl_strategies
 import yaml
 from fedrec.data_models.job_response_model import JobResponseMessage
@@ -136,8 +137,8 @@ class TestAggregator(AbstractTester):
             senderid=self.worker.worker_index,
             receiverid=self.worker.worker_index,
             job_type="aggregate",
-            job_args=None,
-            job_kwargs=None
+            job_args=[],
+            job_kwargs={}
         )
         # check response message
         if response.status:
@@ -151,8 +152,8 @@ class TestAggregator(AbstractTester):
             senderid=self.worker.worker_index,
             receiverid=self.worker.worker_index,
             job_type="sample_clients",
-            job_args=None,
-            job_kwargs=None
+            job_args=[],
+            job_kwargs={}
         )
         if response.status:
             assert len(response.results) == client_num_per_round
@@ -169,17 +170,27 @@ if __name__ == "__main__":
     with open(args.config, "r") as stream:
         config = yaml.safe_load(stream)
 
-    print("training...")
-    # start trainer
-    test_trainer = TestTrainer(config=config)
-    test_trainer.test_training_method()
-    test_trainer.test_testing_method()
+    # print("training...")
+    # # start trainer
+    # test_trainer = TestTrainer(config=config)
+    # test_trainer.test_training_method()
+    # test_trainer.test_testing_method()
     # start aggregator
     print("aggregating...")
+
+    tensor = StateTensors(
+        storage='/home/ramesht/dump_tensor/',
+        worker_id=0, round_idx=0, 
+        tensors=torch.load('/home/ramesht/dump_tensor/worker_id_0/0_0_trainer41.pt'),
+        tensor_type='trainer',
+        suffix="41")
+
     test_aggregator = TestAggregator(
         config=config,
         in_neighbours={
-            0: Neighbour(0, test_trainer.worker._get_model_params(), 5)}
+            0: Neighbour(0, tensor, 5)}
     )
+    print("testing aggregation...")
     test_aggregator.test_aggregation()
+    print("testing sampling...")
     test_aggregator.test_sample_client()

@@ -15,11 +15,12 @@ class FedAvg:
         self.in_neighbours = in_neighbours
         self.out_neighbours = out_neighbours
 
-    def test_run(self, arg1, arg2):
-        return arg1 + arg2
+    def update(self, state:Dict):
+        self.in_neighbours = state['in_neighbours']
+        self.out_neighbours = state['out_neighbours']
 
     def aggregate(self):
-        model_list = [None] * len(self.in_neighbours)
+        model_list = [None] * len(self.in_neighbours.values())
         training_num = 0
  
         for idx, neighbour in enumerate(self.in_neighbours.values()):
@@ -47,3 +48,4 @@ class FedAvg:
                     replace=False)
         logging.info("worker_indexes = %s" % str(selected_neighbours))
         return selected_neighbours
+

@@ -93,9 +93,12 @@ class Aggregator(BaseActor, ABC):
         self.in_neighbours = state.in_neighbours
         self.out_neighbours = state.out_neighbours
         self.round_idx = state.round_idx
-        self.model.load_state_dict(state.state_dict['model'].state)
+        self.load_model(state.state_dict['model'])
         if self.optimizer is not None:
-            self.optimizer.load_state_dict(state.state_dict['optimizer'].state)
+            self.load_optimizer(state.state_dict['optimizer'])
+        # TODO : Will be user defined, the argument should be passed
+        # by the user.
+        self.worker.update(state)
 
     def run(self, func_name, *args, **kwargs):
         """

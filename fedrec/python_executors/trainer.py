@@ -105,6 +105,9 @@ class Trainer(BaseActor, ABC):
         self.local_training_steps = state.state_dict['step']
         if self.optimizer is not None:
             self.load_optimizer(state.state_dict['optimizer'])
+        # TODO : Will be user defined, the argument should be passed
+        # by the user.
+        self.worker.update(state)
 
     def update_dataset(self, model_preproc):
         """Update the dataset, trainer_index and model_index .
