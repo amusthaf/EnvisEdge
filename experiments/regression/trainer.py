@@ -1,12 +1,12 @@
 from typing import Dict
 
-from fedrec.base_trainer import BaseTrainer, TrainConfig
+from fedrec.user_modules.envis_trainer import EnvisTrainer, TrainConfig
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
 
 
 @registry.load('trainer', 'regression')
-class RegressionTrainer(BaseTrainer):
+class RegressionTrainer(EnvisTrainer):
 
     def __init__(
             self,

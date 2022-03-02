@@ -1,7 +1,7 @@
 from typing import Dict
 
 import attr
-from fedrec.base_trainer import BaseTrainer
+from fedrec.user_modules.envis_trainer import EnvisTrainer
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
 
@@ -34,7 +34,7 @@ class DLRMTrainConfig:
 
 
 @registry.load('trainer', 'dlrm')
-class DLRMTrainer(BaseTrainer):
+class DLRMTrainer(EnvisTrainer):
 
     def __init__(
             self,

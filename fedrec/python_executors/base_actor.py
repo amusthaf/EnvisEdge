@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple
 import os
 import torch
 from random import randint
-from fedrec.preprocessor import PreProcessor
+from fedrec.user_modules.envis_preprocessor import EnvisPreProcessor
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
 from fedrec.utilities.random_state import Reproducible
@@ -48,7 +48,7 @@ class BaseActor(Reproducible, ABC):
         self.logger = logger
 
         modelCls = registry.lookup('model', config["model"])
-        self.model_preproc: PreProcessor = registry.instantiate(
+        self.model_preproc: EnvisPreProcessor = registry.instantiate(
             modelCls.Preproc,
             config["model"]['preproc'])
         self._model = None

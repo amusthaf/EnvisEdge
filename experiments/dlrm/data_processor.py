@@ -1,10 +1,10 @@
 import torch
-from fedrec.preprocessor import PreProcessor
+from fedrec.user_modules.envis_preprocessor import EnvisPreProcessor
 from fedrec.utilities import registry
 
 
 @registry.load('preproc', 'dlrm')
-class DLRMPreprocessor(PreProcessor):
+class DLRMPreprocessor(EnvisPreProcessor):
     REGISTERED_NAME = 'dlrm'
 
     def __init__(

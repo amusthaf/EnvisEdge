@@ -3,15 +3,13 @@ from typing import Dict
 import attr
 import numpy as np
 import torch
-from fedrec.preprocessor import PreProcessor
+from fedrec.user_modules.envis_base_module import EnvisBase
+from fedrec.user_modules.envis_preprocessor import EnvisPreProcessor
 from fedrec.utilities import registry
 from fedrec.utilities import saver_utils as saver_mod
 from sklearn import metrics
 from tqdm import tqdm
 from fedrec.utilities.logger import BaseLogger
-
-
-from fedrec.utilities.random_state import Reproducible
 
 
 @attr.s
@@ -42,7 +40,7 @@ class TrainConfig:
     log_gradients = attr.ib(default=False)
 
 
-class BaseTrainer(Reproducible):
+class EnvisTrainer(EnvisBase):
     def __init__(
             self,
             config_dict: Dict,
@@ -55,7 +53,7 @@ class BaseTrainer(Reproducible):
         self.train_config = TrainConfig(**config_dict["trainer"]["config"])
         self.logger = logger
         modelCls = registry.lookup('model', config_dict["model"])
-        self.model_preproc: PreProcessor = registry.instantiate(
+        self.model_preproc: EnvisPreProcessor = registry.instantiate(
             modelCls.Preproc,
             config_dict["model"]['preproc'], unused_keys=(),
             client_id=client_id)
@@ -340,5 +338,4 @@ class BaseTrainer(Reproducible):
         # empty dataloaders for new dataset
         self.reset_loaders()
         # update dataset
-        self.model_preproc=state["model_preproc"]
-
+        self.model_preproc = state["model_preproc"]

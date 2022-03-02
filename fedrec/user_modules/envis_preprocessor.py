@@ -5,7 +5,7 @@ from fedrec.utilities.registry import Registrable
 
 
 @Registrable.register_class_ref
-class PreProcessor(Serializable):
+class EnvisPreProcessor(Serializable):
     def __init__(
             self,
             dataset_config,

@@ -1,9 +1,9 @@
-from fedrec.preprocessor import PreProcessor
+from fedrec.user_modules.envis_preprocessor import EnvisPreProcessor
 from fedrec.utilities import registry
 
 
 @registry.load('preproc', 'regression')
-class RegressionPreprocessor(PreProcessor):
+class RegressionPreprocessor(EnvisPreProcessor):
 
     def __init__(
             self,
