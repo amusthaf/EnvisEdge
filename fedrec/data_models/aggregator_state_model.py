@@ -7,7 +7,6 @@ from fedrec.data_models.state_tensors_model import StateTensors
 from fedrec.serialization.serializable_interface import Serializable
 from fedrec.serialization.serializer_registry import (deserialize_attribute,
                                                       serialize_attribute)
-from fedrec.utilities.logger import BaseLogger
 from fedrec.utilities.registry import Registrable
 
 @Registrable.register_class_ref

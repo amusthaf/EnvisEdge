@@ -1,10 +1,9 @@
-from fedrec.serialization.serializable_interface import Serializable
-from fedrec.serialization.serializer_registry import deserialize_attribute, serialize_attribute
-from fedrec.utilities.registry import Registrable
+from typing import Dict
+from fedrec.utilities.random_state import Reproducible
+import torch
+from fedrec.serialization.serializable_interface import is_primitives
 
-
-@Registrable.register_class_ref
-class EnvisBase(Serializable):
+class EnvisBase(Reproducible):
     """
     Base class for Envis.
     """
@@ -12,19 +11,41 @@ class EnvisBase(Serializable):
     def __init__(self, **kwargs):
         super().__init__()
         self.update(**kwargs)
+        self._storables = None 
 
-    def update(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
+    @property
+    def state(self):
+        # check if self._storables is None
+        # if yes, then add all the attributes of the object
+        # to the dict.
+        if self._storables is None:
+            for key, value in self.__dict__.items():
+                if isinstance(value, torch.optim.optimizer):
+                    self._storables[key] = value
+                elif isinstance(value, torch.nn.Module):
+                    self._storables[key] = value
+                elif isinstance(value, torch.nn.ModuleDict):
+                    self._storables[key] = value
+                elif is_primitives(value):
+                    self._storables[key] = value
+                else:
+                    print("not able to store the type"
+                    + "Please store one of the following types:"
+                    + "torch.optim.optimizer, torch.nn.Module, "
+                    + "torch.nn.ModuleDict, primitives")
+        return self._storables
 
-    def serialize(self):
-        return self.append_type({
-            k: serialize_attribute(v) for k, v in self.__dict__.items()
-        })
+    def store(self, state: Dict):
+        # self._storables will maintain dict
+        # all class objects that user wants to store
+        # and resuse.
+        self._storables = state
 
-    @classmethod
-    def deserialize(cls, obj):
-        deserialized_output = {
-            k: deserialize_attribute(v) for k, v in obj.items()
-        }
-        return cls(**deserialized_output)
+    def update(self, state : Dict):
+        self._storables = state
+        for k, v in state.items():
+            v.load_state_dict(state[k])
+
+    def _attach_envis_wrapper(self, obj):
+        # TODO: implement wapper function
+        pass

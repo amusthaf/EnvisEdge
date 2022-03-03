@@ -64,6 +64,7 @@ class Aggregator(BaseActor, ABC):
         """
         state = {
             'model': self._get_model_params(),
+            'worker_state' : self.worker.state,
             'step': self.round_idx
         }
         if self.optimizer is not None:
@@ -96,9 +97,7 @@ class Aggregator(BaseActor, ABC):
         self.load_model(state.state_dict['model'])
         if self.optimizer is not None:
             self.load_optimizer(state.state_dict['optimizer'])
-        # TODO : Will be user defined, the argument should be passed
-        # by the user.
-        self.worker.update(state)
+        self.worker.update(state.state_dict["worker_state"])
 
     def run(self, func_name, *args, **kwargs):
         """
