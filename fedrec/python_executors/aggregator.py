@@ -43,6 +43,8 @@ class Aggregator(BaseActor, ABC):
         # TODO update trainer logic to avoid double model initialization
         self.worker = registry.construct('aggregator',
                                          config['aggregator'],
+                                         unused_keys=(),
+                                         config_dict=config,
                                          in_neighbours=in_neighbours,
                                          out_neighbours=out_neighbours)
         # TODO : Check why it is calling dataloaders.
@@ -64,7 +66,7 @@ class Aggregator(BaseActor, ABC):
         """
         state = {
             'model': self._get_model_params(),
-            'worker_state' : self.worker.state,
+            'worker_state': self.worker.state,
             'step': self.round_idx
         }
         if self.optimizer is not None:

@@ -179,9 +179,9 @@ if __name__ == "__main__":
     print("aggregating...")
 
     tensor = StateTensors(
-        storage='/home/ramesht/dump_tensor/',
+        storage='/home/varun/dump_tensor/',
         worker_id=0, round_idx=0, 
-        tensors=torch.load('/home/ramesht/dump_tensor/worker_id_0/0_0_trainer41.pt'),
+        tensors=torch.load('/home/varun/dump_tensor/worker_id_0/0_0_trainer4.pt'),
         tensor_type='trainer',
         suffix="41")
 

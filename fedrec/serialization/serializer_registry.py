@@ -2,6 +2,7 @@ from collections import defaultdict
 from typing import Dict, List, Tuple
 from fedrec.utilities import registry
 from defusedxml import NotSupportedError
+from fedrec.utilities.registry import Registrable
 from fedrec.serialization.serializable_interface import (Serializable,
                                                          is_primitives)
 
@@ -9,7 +10,7 @@ from fedrec.serialization.serializable_interface import (Serializable,
 def get_deserializer(serialized_obj_name):
     # find the deserializer from registry
     # given object name.
-    return registry.lookup_class_ref(serialized_obj_name)
+    return Registrable.lookup_class_ref(serialized_obj_name)
 
 
 def serialize_attribute(obj):

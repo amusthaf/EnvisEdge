@@ -10,9 +10,15 @@ from fedrec.serialization.serializer_registry import (deserialize_attribute,
 @Registrable.register_class_ref
 class EnvisModule(Serializable):
     def __init__(
-        self, 
-        input_obj) -> None:
+        self,
+        state: Dict = None,
+        class_ref_name: str=None, 
+        input_obj=None) -> None:
         super().__init__()
+
+        if (class_ref_name is None) and (input_obj is None):
+            raise ValueError("Either class_ref_name or input_obj must be provided")
+
         if "state_dict" in dir(input_obj):
             raise NotImplementedError(
                 "EnvisModule needs \"state_dict\" method to be implemented")
@@ -21,23 +27,32 @@ class EnvisModule(Serializable):
             raise NotImplementedError(
                 "EnvisModule needs \"load_state_dict\" method to be implemented")
         self.original_reference = input_obj
+        self.class_ref_name = class_ref_name
+        self._state = state
+        if class_ref_name is not None:
+            self.class_ref_name = class_ref_name
+        elif input_obj is not None:
+            self.class_ref_name = input_obj.__class__.__name__
 
-
-    def serialize(self):
-        #TODO decide how to fill storage from config 
-        response_dict = {}
-        state_dict = EnvisTensors(
+    @property
+    def state(self):
+        if self._state is None:
+            self._state = EnvisTensors(
             storage="storage",
             tensors=self.original_reference.state_dict(),
             tensor_type="user_module"
         )
+        return self._state
 
-        response_dict["input_ref"] = serialize_attribute(state_dict)
+    def serialize(self):
+        #TODO decide how to fill storage from config 
+        response_dict = {}
+        response_dict["class_ref"] = serialize_attribute(self.class_ref_name)
+        response_dict["state"] = serialize_attribute(self.state)
         return self.append_type(response_dict)
 
     @classmethod
     def deserialize(cls, obj: Dict):
-        storage = # TODO: fill storage from config
-        tensor = deserialize_attribute(obj["tensor"])
-        tensor_type = obj["tensor_type"]
-        return cls(storage, tensor, tensor_type)
+        state = deserialize_attribute(obj["state"])
+        class_ref = obj["class_ref"]
+        return cls(class_ref_name=class_ref, state=state)

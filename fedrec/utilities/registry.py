@@ -21,6 +21,7 @@ import sys
 # a defaultdict provides default values for non-existent keys.
 LOOKUP_DICT = collections.defaultdict(dict)
 
+
 def load(kind, name):
     '''
     A decorator to record callable object definitions
@@ -55,15 +56,11 @@ def load(kind, name):
     def decorator(obj):
         if name in registry:
             raise LookupError('{} already present'.format(name, kind))
-        registry[name] = obj            
+        registry[name] = obj
         class_ref[obj.__name__] = obj
         return obj
     return decorator
 
-def lookup_class_ref(class_name):
-    if class_name not in LOOKUP_DICT["class_map"]:
-        raise KeyError('No class found for "{}"'.format(class_name))
-    return LOOKUP_DICT["class_map"][class_name]
 
 def lookup(kind, name):
     '''
@@ -224,3 +221,44 @@ class Registrable(object):
 
         LOOKUP_DICT["class_map"][class_ref.type_name()] = class_ref
         return class_ref
+
+    @staticmethod
+    def wrap_to_envis(wrapper_class):
+        '''
+        Wraps the construct function to make it compatible with
+        the Envis framework.
+        '''
+        def wrapped(class_ref):
+            LOOKUP_DICT["wrapper_class"][class_ref] = wrapper_class
+            return class_ref
+        return wrapped
+
+    @staticmethod
+    def lookup_wrapper(obj):
+        '''
+        Returns the envis wrapper class for the class.
+        '''
+        if not callable(obj):
+            obj = obj.__class__
+        if obj not in LOOKUP_DICT["wrapper_class"]:
+            raise KeyError('No class found for "{}"'.format(obj))
+        return LOOKUP_DICT["wrapper_class"][obj]
+
+    @staticmethod
+    def is_wrapped(obj):
+        """
+        """
+        if not callable(obj):
+            obj = obj.__class__
+        return obj in LOOKUP_DICT["wrapper_class"]
+
+    @staticmethod
+    def lookup_class_ref(class_name):
+        if class_name not in LOOKUP_DICT["class_map"]:
+            raise KeyError('No class found for "{}"'.format(class_name))
+        return LOOKUP_DICT["class_map"][class_name]
+
+    @staticmethod
+    def construct_wrapper(class_name, **kwargs):
+        class_ref = Registrable.lookup_class_ref(class_name)
+        return class_ref(**kwargs)

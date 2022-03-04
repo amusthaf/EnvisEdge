@@ -1,7 +1,6 @@
 from typing import Dict
 
 from fedrec.data_models.tensors_model import EnvisTensors
-from fedrec.serialization.serializable_interface import Serializable
 from fedrec.utilities.io_utils import load_tensors, save_tensors
 from fedrec.utilities.registry import Registrable
 
@@ -51,9 +50,6 @@ class StateTensors(EnvisTensors):
             str(self.get_name()),
             self.suffix)
 
-    def get_torch_obj(self):
-        return self.torch_obj
-
     @staticmethod
     def split_path(path):
         """
@@ -100,7 +96,7 @@ class StateTensors(EnvisTensors):
         """
         # if file is provided, save the tensor
         # to the file and return the file path.
-        path = save_tensors(self.torch_obj, self.get_path())
+        path = save_tensors(self.get_torch_obj(), self.get_path())
         return self.append_type({
             "storage": path
         })

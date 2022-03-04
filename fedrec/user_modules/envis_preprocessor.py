@@ -54,7 +54,7 @@ class EnvisPreProcessor(Serializable):
 
     @classmethod
     def deserialize(cls, obj):
-        preproc_cls = registry.lookup_class_ref(obj['proc_name'])
+        preproc_cls = Registrable.lookup_class_ref(obj['proc_name'])
         return preproc_cls(
             dataset_config=obj["dataset_config"],
             client_id=obj["client_id"])
