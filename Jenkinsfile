@@ -10,7 +10,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'ssh rm -f /home/ubuntu/jenkins-test/a'
+                sh 'ssh ubuntu@ec2-13-233-73-176.ap-south-1.compute.amazonaws.com rm -f /home/ubuntu/jenkins-test/a'
             }
         }      
         stage('Test') {
