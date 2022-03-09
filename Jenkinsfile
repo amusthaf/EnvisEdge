@@ -5,36 +5,18 @@ pipeline {
    stages {
         stage('Checkout') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/branchname']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'jenkins-user-github', url: 'https://github.com/aakashsehgal/FMU.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: 'refactor-serializer']], browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/amusthaf/EnvisEdge'], extensions: [[$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: false], [$class: 'GitLFSPull'], [$class: 'LocalBranch', localBranch: 'refactor-serializer']], userRemoteConfigs: [[url: 'https://github.com/amusthaf/EnvisEdge']]])
                 sh "ls -lart ./*"
             }
-        }     
-    }
-}
-
-
-#!/usr/bin/env groovy
-
-pipeline {
-
-    agent {
-        docker {
-            image 'node'
-            args '-u root'
         }
-    }
-
-    stages {
         stage('Build') {
             steps {
-                echo 'Building...'
-                sh 'npm install'
+                echo 'Build instructions go here...'
             }
         }
         stage('Test') {
             steps {
                 echo 'Testing...'
-                sh 'npm test'
             }
         }
     }
