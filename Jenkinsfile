@@ -10,7 +10,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh "scp -r /var/lib/jenkins/workspace/EnvisEdge-Python ubuntu@ec2-13-233-73-176.ap-south-1.compute.amazonaws.com:/home/ubuntu/jenkins-test"
+                sh "scp -r /var/lib/jenkins/workspace/EnvisEdge-Python ubuntu@ec2-65-1-51-157.ap-south-1.compute.amazonaws.com:/home/ubuntu/jenkins-test"
             }
         }      
         stage('Test') {
