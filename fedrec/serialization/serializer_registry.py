@@ -14,6 +14,9 @@ def get_deserializer(serialized_obj_name):
 
 
 def serialize_attribute(obj):
+    # TODO : make a single global function 
+    # for this method.
+    ## location : [envis_base_module.py]
     # Then recusively call serialize_attribute on each
     # attribute in the dict.
     if isinstance(obj, Dict):
@@ -31,6 +34,9 @@ def serialize_attribute(obj):
 
 
 def deserialize_attribute(obj: Dict):
+    # TODO : make a single global function 
+    # for this method.
+    ## location : [envis_base_module.py]
     # Initially take in dict from abstract comm manager 
     # from kafka consumer.
     # check for primitives

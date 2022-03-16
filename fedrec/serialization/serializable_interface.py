@@ -37,11 +37,7 @@ class Serializable(Registrable, ABC):
     @abstractmethod
     def deserialize(self):
         raise NotImplementedError()
-
-    @classmethod
-    def type_name(cls):
-        return cls.__name__
-
+        
     def append_type(self, obj_dict):
         """Generates a dictionary from an object and
          appends type information for finding the appropriate serialiser.

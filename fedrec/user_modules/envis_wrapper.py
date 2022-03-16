@@ -1,9 +1,6 @@
 import torch
-from fedrec.data_models.torch_module import EnvisModule
-from fedrec.utilities.registry import Registrable
+from fedrec.data_models.envis_module import EnvisModule
 
-Registrable.wrap_to_envis(EnvisModule)(torch.optim.Optimizer)
-
-Registrable.wrap_to_envis(EnvisModule)(torch.nn.Module)
-
-Registrable.wrap_to_envis(EnvisModule)(torch.nn.ModuleDict)
+torch.optim.Optimizer = EnvisModule(torch.optim.Optimizer)
+torch.nn.Module = EnvisModule(torch.nn.Module)
+torch.nn.ModuleDict = EnvisModule(torch.nn.ModuleDict)
