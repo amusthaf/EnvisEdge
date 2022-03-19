@@ -170,18 +170,18 @@ if __name__ == "__main__":
     with open(args.config, "r") as stream:
         config = yaml.safe_load(stream)
 
-    # print("training...")
-    # # start trainer
-    # test_trainer = TestTrainer(config=config)
-    # test_trainer.test_training_method()
-    # test_trainer.test_testing_method()
+    print("training...")
+    # start trainer
+    test_trainer = TestTrainer(config=config)
+    test_trainer.test_training_method()
+    test_trainer.test_testing_method()
     # start aggregator
     print("aggregating...")
 
     tensor = StateTensors(
-        storage='/home/varun/dump_tensor/',
+        storage='/home/ramesht/dump_tensor/',
         worker_id=0, round_idx=0, 
-        tensors=torch.load('/home/varun/dump_tensor/worker_id_0/0_0_trainer4.pt'),
+        tensors=torch.load('/home/ramesht/dump_tensor/worker_id_0/0_0_trainer41.pt'),
         tensor_type='trainer',
         suffix="41")
 
