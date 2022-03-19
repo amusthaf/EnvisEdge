@@ -18,7 +18,6 @@ class EnvisBase(Reproducible):
         # TODO : make a single global function
         # for this method.
         # location : [serializer_registry.py]
-
         if isinstance(obj, dict):
             return {
                 k: cls._get_default_state(v)
