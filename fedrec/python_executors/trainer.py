@@ -3,6 +3,7 @@ from typing import Dict
 
 
 from fedrec.python_executors.base_actor import BaseActor
+from fedrec.user_modules.envis_base_module import EnvisBase
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
 from fedrec.data_models.trainer_state_model import TrainerState
@@ -44,7 +45,7 @@ class Trainer(BaseActor, ABC):
         self._data_loaders = {}
         self.client_id = client_id
         # TODO update trainer logic to avoid double model initialization
-        self.worker = registry.construct(
+        self.worker : EnvisBase= registry.construct(
             'trainer',
             config["trainer"],
             unused_keys=(),
@@ -73,7 +74,7 @@ class Trainer(BaseActor, ABC):
         """
         state = {
             'model': self._get_model_params(),
-            'worker_state' : self.worker.state,
+            'worker_state' : self.worker.envis_state,
             'step': self.local_training_steps
         }
         if self.optimizer is not None:

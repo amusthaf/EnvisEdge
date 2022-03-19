@@ -47,7 +47,7 @@ class EnvisTrainer(EnvisBase):
             logger: BaseLogger,
             client_id=None) -> None:
 
-        super().__init__(config_dict["random"])
+        super().__init__(config_dict)
         self.config_dict = config_dict
         self.client_id = client_id
         self.train_config = TrainConfig(**config_dict["trainer"]["config"])

@@ -15,7 +15,7 @@ class FedAvg(EnvisBase):
                  config_dict: Dict,
                  in_neighbours: Dict[int, Neighbour] = None,
                  out_neighbours: Dict[int, Neighbour] = None):
-        super().__init__(config_dict["random"])
+        super().__init__(config_dict)
         self.in_neighbours = in_neighbours
         self.out_neighbours = out_neighbours
         self.config_dict = config_dict
@@ -23,22 +23,20 @@ class FedAvg(EnvisBase):
         self.model_preproc: EnvisPreProcessor = registry.instantiate(
             modelCls.Preproc,
             self.config_dict["model"]['preproc'])
-        self._model = None
-
-    @property
-    def model(self):
-        if self._model is not None:
-            return self._model
 
         with self.model_random:
             # 1. Construct model
             self.model_preproc.load_data_description()
-            self._model = registry.construct(
+            self.model = registry.construct(
                 'model', self.config_dict["model"],
                 preprocessor=self.model_preproc,
                 unused_keys=('name', 'preproc')
             )
-        return self._model
+
+    def store_state(self):
+        return {
+            '_model': self.model,
+        }
 
     def aggregate(self):
         model_list = [None] * len(self.in_neighbours.values())

@@ -57,7 +57,7 @@ def load(kind, name):
         if name in registry:
             raise LookupError('{} already present'.format(name, kind))
         registry[name] = obj
-        class_ref[obj.__name__] = obj
+        class_ref[obj.__module__ + "." + obj.__name__] = obj
         return obj
     return decorator
 
@@ -210,6 +210,9 @@ def instantiate(callable, config, unused_keys=(), **kwargs):
 
 class Registrable(object):
 
+    def __init__(self) -> None:
+        pass
+    
     @classmethod
     def type_name(cls):
         return cls.__module__ + "." + cls.__name__

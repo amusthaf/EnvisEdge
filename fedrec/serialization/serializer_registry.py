@@ -29,7 +29,7 @@ def serialize_attribute(obj):
     elif is_primitives(obj):
         return obj
     else:
-        assert isinstance(obj, Serializable), "Object must be serializable"
+        assert hasattr(obj,"serialize"), "Object must be serializable"
         return obj.serialize()
 
 

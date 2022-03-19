@@ -1,6 +1,8 @@
 from re import A
 from typing import Dict
 
+from attr import attr
+
 from fedrec.serialization.serializable_interface import is_primitives
 from fedrec.utilities.random_state import Reproducible
 
@@ -10,38 +12,44 @@ class EnvisBase(Reproducible):
     Base class for Envis.
     """
 
-    def __init__(self, rand_config: Dict):
-        super().__init__(rand_config)
+    def __init__(self, config: Dict):
+        super().__init__(config["random"])
+        self.config = config
+        self.storage = self.config["log_dir"]["PATH"]
+
         self._storables = None
 
-    def _get_default_state(cls, obj):
+    def _get_default_state(self, obj):
         # TODO : make a single global function
         # for this method.
         # location : [serializer_registry.py]
+        if hasattr(obj, "_envis_state"):
+            setattr(obj, "storage", self.storage)
+            return obj._envis_state
         if isinstance(obj, dict):
             return {
-                k: cls._get_default_state(v)
+                k: self._get_default_state(v)
                 for k, v in obj.items()
             }
         elif isinstance(obj, (list, tuple)):
             return (
-                cls._get_default_state(v)
+                self._get_default_state(v)
                 for v in obj
             )
         elif is_primitives(obj):
             return obj
-        elif hasattr(obj, "envis_state"):
-            return obj.envis_state
+        # elif hasattr(obj, "envis_state"):
+        #     return obj.envis_state
         # if None of the above them open the
         # object state and recursively iterate
         # upon it.
         else:
             return {
-                k: cls._get_default_state(v)
+                k: self._get_default_state(v)
                 for k, v in obj.__dict__.items()
             }
 
-    def _set_state(cls, obj, state: Dict):
+    def _set_state(self, obj, state: Dict):
         # TODO : make a single global function
         # for this method.
         # location : [serilizer_registry.py]
@@ -52,12 +60,12 @@ class EnvisBase(Reproducible):
             attribute = getattr(obj, k)
             if isinstance(attribute, dict):
                 value = {
-                    sub_k: cls._set_state(attribute[sub_k], sub_v)
+                    sub_k: self._set_state(attribute[sub_k], sub_v)
                     for sub_k, sub_v in v.items()
                 }
             elif isinstance(attribute, (list, tuple)):
                 value = (
-                    cls._set_state(attribute[idx], sub_v)
+                    self._set_state(attribute[idx], sub_v)
                     for idx, sub_v in enumerate(v)
                 )
                 if isinstance(attribute, list):
@@ -72,25 +80,31 @@ class EnvisBase(Reproducible):
             # upon it.
             else:
                 for sub_k, sub_v in attribute.__dict__.items():
-                    cls._set_state(sub_v, v[sub_k])
+                    self._set_state(sub_v, v[sub_k])
+                value = attribute
             setattr(obj, k, value)
 
         return obj
+
+    def store_state(self):
+        return None
 
     @property
     def envis_state(self):
         # check if self._storables is None
         # if yes, then add all the attributes of the object
         # to the dict.
-        if self._storables is None:
-            self._storables = self._get_default_state(self)
-        return self._storables
 
-    def store(self, state: Dict):
-        # self._storables will maintain dict
-        # all class objects that user wants to store
-        # and resuse.
-        self._storables = self._get_default_state(state)
+
+        if self._storables is None and (self.store_state() is None):
+            self._storables = {
+                "envis_state": self._get_default_state(self)
+            }
+        else: 
+            a=self.store_state()
+            self._storables = self._get_default_state(self.store_state())
+
+        return self._storables
 
     def update(self, state: Dict):
         self._set_state(self, state)

@@ -4,6 +4,7 @@ from typing import Dict
 import attr
 from fedrec.data_models.aggregator_state_model import AggregatorState, Neighbour
 from fedrec.python_executors.base_actor import BaseActor
+from fedrec.user_modules.envis_base_module import EnvisBase
 from fedrec.utilities import registry
 from fedrec.utilities.logger import BaseLogger
 
@@ -41,12 +42,12 @@ class Aggregator(BaseActor, ABC):
         self.in_neighbours = in_neighbours
         self.out_neighbours = out_neighbours
         # TODO update trainer logic to avoid double model initialization
-        self.worker = registry.construct('aggregator',
-                                         config['aggregator'],
-                                         unused_keys=(),
-                                         config_dict=config,
-                                         in_neighbours=in_neighbours,
-                                         out_neighbours=out_neighbours)
+        self.worker: EnvisBase = registry.construct('aggregator',
+                                                    config['aggregator'],
+                                                    unused_keys=(),
+                                                    config_dict=config,
+                                                    in_neighbours=in_neighbours,
+                                                    out_neighbours=out_neighbours)
         # TODO : Check why it is calling dataloaders.
         self.worker_funcs = {
             func_name: getattr(self.worker, func_name)
@@ -66,7 +67,7 @@ class Aggregator(BaseActor, ABC):
         """
         state = {
             'model': self._get_model_params(),
-            'worker_state': self.worker.state,
+            'worker_state': self.worker.envis_state,
             'step': self.round_idx
         }
         if self.optimizer is not None:
