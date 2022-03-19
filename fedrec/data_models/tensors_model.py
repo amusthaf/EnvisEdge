@@ -49,7 +49,7 @@ class EnvisTensors(Serializable):
         return self.tensors
 
     @staticmethod
-    def split_path(self, path):
+    def split_path(path):
         """
         Splits the path into the storage, tensor_type.
 
@@ -66,7 +66,8 @@ class EnvisTensors(Serializable):
             The tensor type.
 
         """
-        storage, name = path.split("/")
+        storage = "/".join(path.split("/")[:-1])
+        name = path.split("/")[-1]
         tensor_type, suffix = name.split("_")
         return storage, tensor_type
 

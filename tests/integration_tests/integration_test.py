@@ -45,10 +45,6 @@ class AbstractTester():
     def receive_message(self):
         return self.comm_manager.receive_message()
 
-    @abstractproperty
-    def worker(self) -> BaseActor:
-        print("Not implemented")
-
     def submit_message(self,
                        senderid,
                        receiverid,
@@ -123,14 +119,11 @@ class TestAggregator(AbstractTester):
         super().__init__(config, "aggregator")
         self.in_neighbours = in_neighbours
         self.out_neighbours = out_neighbours
-
-    @property
-    def worker(self):
-        return Aggregator(worker_index=0, config=config,
-                          logger=self.logger,
-                          in_neighbours=self.in_neighbours,
-                          out_neighbours=self.out_neighbours,
-                          )
+        self.worker = Aggregator(worker_index=0, config=config,
+                                 logger=self.logger,
+                                 in_neighbours=self.in_neighbours,
+                                 out_neighbours=self.out_neighbours,
+                                 )
 
     def test_aggregation(self):
         response: JobResponseMessage = self.submit_message(
@@ -180,8 +173,9 @@ if __name__ == "__main__":
 
     tensor = StateTensors(
         storage='/home/varun/dump_tensor/',
-        worker_id=0, round_idx=0, 
-        tensors=torch.load('/home/varun/dump_tensor/worker_id_0/0_0_trainer45.pt'),
+        worker_id=0, round_idx=0,
+        tensors=torch.load(
+            '/home/varun/dump_tensor/worker_id_0/0_0_trainer45.pt'),
         tensor_type='trainer',
         suffix="41")
 

@@ -43,7 +43,7 @@ class EnvisModule(Serializable):
             self._envis_state = EnvisTensors(
                 storage="storage",
                 tensors=self.original_reference.state_dict(),
-                tensor_type="user_module"
+                tensor_type="usermodule"
             )
         return self._envis_state
 
