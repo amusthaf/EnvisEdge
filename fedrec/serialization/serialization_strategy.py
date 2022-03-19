@@ -4,7 +4,7 @@ from json import dumps, loads
 from fedrec.utilities import registry
 
 
-class SerializationStrategy(ABC):
+class SerializationStrategy(registry.Registrable, ABC):
 
     @abstractmethod
     def parse(self, obj):

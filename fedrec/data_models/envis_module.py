@@ -1,5 +1,3 @@
-import os
-import random
 from typing import Any, Dict
 from fedrec.data_models.tensors_model import EnvisTensors
 from fedrec.serialization.serializable_interface import Serializable
@@ -29,11 +27,7 @@ class EnvisModule(Serializable):
     # all pytorch modules when called will have EnvisModule
     # which we will use to serialize and decirialize.
     def __getattr__(self, __name: str) -> Any:
-        # check is attribute is present
-        if hasattr(self, __name):
-            # get the attribute from the object
-            return getattr(self, __name)
-        elif (self.original_reference is not None) and (self.original_reference, __name):
+        if hasattr(self.class_reference, __name):
             return getattr(self.original_reference, __name)
         else:
             raise AttributeError(
