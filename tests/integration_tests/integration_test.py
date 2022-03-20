@@ -165,9 +165,9 @@ if __name__ == "__main__":
 
     print("training...")
     # start trainer
-    # test_trainer = TestTrainer(config=config)
-    # test_trainer.test_training_method()
-    # test_trainer.test_testing_method()
+    test_trainer = TestTrainer(config=config)
+    test_trainer.test_training_method()
+    test_trainer.test_testing_method()
     # start aggregator
     print("aggregating...")
 

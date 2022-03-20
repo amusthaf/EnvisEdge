@@ -58,10 +58,24 @@ class EnvisTrainer(EnvisBase):
             config_dict["model"]['preproc'], unused_keys=(),
             client_id=client_id)
 
-        self._model = None
+        with self.model_random:
+            # 1. Construct model
+            self.model_preproc.load_data_description()
+            self.model = registry.construct(
+                'model', self.config_dict["model"],
+                preprocessor=self.model_preproc,
+                unused_keys=('name', 'preproc')
+            )
+            if torch.cuda.is_available():
+                self.model.cuda()
+
         self._data_loaders = {}
         self._scheduler = None
-        self._optimizer = None
+
+        with self.init_random:
+            self.optimizer = registry.construct(
+                'optimizer', self.config_dict['trainer']['optimizer'],
+                params=self.model.parameters())
         self._saver = None
 
     def reset_loaders(self):
@@ -74,32 +88,6 @@ class EnvisTrainer(EnvisBase):
             for batch in loader:
                 yield batch, current_epoch
             current_epoch += 1
-
-    @property
-    def model(self):
-        if self._model is not None:
-            return self._model
-
-        with self.model_random:
-            # 1. Construct model
-            self.model_preproc.load_data_description()
-            self._model = registry.construct(
-                'model', self.config_dict["model"],
-                preprocessor=self.model_preproc,
-                unused_keys=('name', 'preproc')
-            )
-            if torch.cuda.is_available():
-                self._model.cuda()
-        return self._model
-
-    @property
-    def optimizer(self):
-        if self._optimizer is None:
-            with self.init_random:
-                self._optimizer = registry.construct(
-                    'optimizer', self.config_dict['trainer']['optimizer'],
-                    params=self.model.parameters())
-        return self._optimizer
 
     def get_scheduler(self, optimizer, **kwargs):
         if self._scheduler is None:
@@ -228,6 +216,12 @@ class EnvisTrainer(EnvisBase):
 
         return False, results
 
+    def store_state(self):
+        assert self.model is not None
+        return {
+            'model': self.model
+        }
+
     def test(self):
         results = {}
         if self.train_config.eval_on_train:
@@ -332,10 +326,10 @@ class EnvisTrainer(EnvisBase):
 
     def update(self, state: Dict):
         # Update the model
-        self.model.load_state_dict(state["model"])
-        # Update the optimizer
-        self.optimizer.load_state_dict(state["optimizer"])
-        # empty dataloaders for new dataset
-        self.reset_loaders()
-        # update dataset
-        self.model_preproc = state["model_preproc"]
+        self.model.load_state_dict(state["model"].tensors)
+        # # Update the optimizer
+        # self.optimizer.load_state_dict(state["optimizer"].tensors)
+        # # empty dataloaders for new dataset
+        # self.reset_loaders()
+        # # update dataset
+        # self.model_preproc = state["model_preproc"]
