@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Dict
 
-
+import inspect
 from fedrec.python_executors.base_actor import BaseActor
 from fedrec.user_modules.envis_base_module import EnvisBase
 from fedrec.utilities import registry
@@ -54,9 +54,8 @@ class Trainer(BaseActor, ABC):
             logger=logger)
 
         self.worker_funcs = {
-            func_name: getattr(self.worker, func_name)
-            for func_name in dir(self.worker)
-            if callable(getattr(self.worker, func_name))
+            func_name_list[0]: getattr(self.worker, func_name_list[0])
+            for func_name_list in inspect.getmembers(self.worker, predicate=inspect.ismethod)
         }
         #  self.worker_funcs = {"test_run": getattr(self.worker, "test_run")}
 

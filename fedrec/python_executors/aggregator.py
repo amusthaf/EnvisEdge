@@ -1,7 +1,7 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Dict
 
-import attr
+import inspect
 from fedrec.data_models.aggregator_state_model import AggregatorState, Neighbour
 from fedrec.python_executors.base_actor import BaseActor
 from fedrec.user_modules.envis_base_module import EnvisBase
@@ -48,13 +48,10 @@ class Aggregator(BaseActor, ABC):
                                                     config_dict=config,
                                                     in_neighbours=in_neighbours,
                                                     out_neighbours=out_neighbours)
-        # TODO : Check why it is calling dataloaders.
         self.worker_funcs = {
-            func_name: getattr(self.worker, func_name)
-            for func_name in dir(self.worker)
-            if callable(getattr(self.worker, func_name))
+            func_name_list[0]: getattr(self.worker, func_name_list[0])
+            for func_name_list in inspect.getmembers(self.worker, predicate=inspect.ismethod)
         }
-        # self.worker_funcs = {"test_run": getattr(self.worker, "test_run")}
 
     def serialize(self):
         """Serialise the state of the worker to a AggregatorState.

@@ -13,8 +13,8 @@ from fedrec.utilities.random_state import RandomContext
 class FedAvg(EnvisBase):
     def __init__(self,
                  config_dict: Dict,
-                 in_neighbours: Dict[int, Neighbour] = None,
-                 out_neighbours: Dict[int, Neighbour] = None):
+                 in_neighbours: Dict[int, Neighbour] = {},
+                 out_neighbours: Dict[int, Neighbour] = {}):
         super().__init__(config_dict)
         self.in_neighbours = in_neighbours
         self.out_neighbours = out_neighbours
@@ -34,8 +34,10 @@ class FedAvg(EnvisBase):
             )
 
     def store_state(self):
+        assert self.model is not None
         return {
-            '_model': self.model,
+            'model': self.model,
+            'in_neighbours': self.in_neighbours,
         }
 
     def aggregate(self):

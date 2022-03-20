@@ -19,13 +19,14 @@ class EnvisBase(Reproducible):
 
         self._storables = None
 
-    def _get_default_state(self, obj):
+    def _get_default_state(self, obj, check_envis = True):
         # TODO : make a single global function
         # for this method.
         # location : [serializer_registry.py]
-        if hasattr(obj, "_envis_state"):
+        
+        if hasattr(obj, "serialize") and check_envis:
             setattr(obj, "storage", self.storage)
-            return obj._envis_state
+            return obj
         if isinstance(obj, dict):
             return {
                 k: self._get_default_state(v)
@@ -75,6 +76,8 @@ class EnvisBase(Reproducible):
             elif hasattr(attribute, "envis_state"):
                 attribute.load_envis_state(v)
                 value = attribute
+            elif hasattr(attribute, "serialize"):
+                attribute = v
             # if None of the above them open the
             # object state and recursively iterate
             # upon it.
@@ -97,8 +100,9 @@ class EnvisBase(Reproducible):
 
 
         if self._storables is None and (self.store_state() is None):
+
             self._storables = {
-                "envis_state": self._get_default_state(self)
+                "envis_state": self._get_default_state(self, False)
             }
         else: 
             a=self.store_state()
