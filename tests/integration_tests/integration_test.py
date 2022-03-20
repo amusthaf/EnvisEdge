@@ -175,7 +175,7 @@ if __name__ == "__main__":
         storage='/home/varun/dump_tensor/',
         worker_id=0, round_idx=0,
         tensors=torch.load(
-            '/home/varun/dump_tensor/worker_id_0/0_0_trainer45.pt'),
+            '/home/varun/dump_tensor/test.pt'),
         tensor_type='trainer',
         suffix="41")
 
