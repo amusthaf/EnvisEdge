@@ -71,10 +71,7 @@ class TestTrainer(AbstractTester):
     def __init__(self,
                  config: Dict) -> None:
         super().__init__(config, "trainer")
-
-    @property
-    def worker(self):
-        return Trainer(worker_index=0,
+        self.worker =  Trainer(worker_index=0,
                        config=self.config,
                        logger=NoOpLogger(),
                        client_id=2
@@ -137,7 +134,7 @@ class TestAggregator(AbstractTester):
         if response.status:
             worker_state = response.results
             self.worker.load_worker(worker_state)
-            # print(f"Worker State {response.results}")
+            print(f"Worker State {response.results}")
 
     def test_sample_client(self,
                            client_num_per_round):
@@ -167,15 +164,16 @@ if __name__ == "__main__":
     # start trainer
     test_trainer = TestTrainer(config=config)
     test_trainer.test_training_method()
+    print("testing train model...")
     test_trainer.test_testing_method()
     # start aggregator
     print("aggregating...")
 
     tensor = StateTensors(
-        storage='/home/varun/dump_tensor/',
+        storage='/home/ramesht/dump_tensor/',
         worker_id=0, round_idx=0,
         tensors=torch.load(
-            '/home/varun/dump_tensor/test.pt'),
+            '/home/ramesht/dump_tensor/worker_id_0/0_0_trainer.pt'),
         tensor_type='trainer',
         suffix="41")
 

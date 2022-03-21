@@ -72,7 +72,7 @@ class Kafka(AbstractCommunicationManager):
                 value_deserializer=self.deserialize,
                 auto_offset_reset='latest',
                 enable_auto_commit=True,
-                auto_commit_interval_ms=100,
+                auto_commit_interval_ms=50,
                 group_id=consumer_group_id)
 
     def receive_message(self):
