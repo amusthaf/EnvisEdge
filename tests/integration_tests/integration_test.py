@@ -170,10 +170,10 @@ if __name__ == "__main__":
     print("aggregating...")
 
     tensor = StateTensors(
-        storage='/home/ramesht/dump_tensor/',
+        storage='/home/ubuntu/dump_tensor/',
         worker_id=0, round_idx=0,
         tensors=torch.load(
-            '/home/ramesht/dump_tensor/worker_id_0/0_0_trainer.pt'),
+            '/home/ubuntu/dump_tensor/worker_id_0/0_0_trainer.pt'),
         tensor_type='trainer',
         suffix="41")
 
